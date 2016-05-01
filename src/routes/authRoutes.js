@@ -4,45 +4,46 @@ var authRouter = express.Router();
 
 var router = function(nav) {
     var authors = [{
-        title: 'War and Peace',
-        genre: 'Historical Fiction',
-        author: 'Lev Nikolayevich Tolstoy',
+        title: 'Cryptonomicon',
+        isbn10: '0060512806',
+        author: 'Neil Stephenson',
+        read: true
+    }, {
+        title: 'Leviathan Wakes',
+        isbn10: '0316129089',
+        author: 'James S.A. Corey',
         read: false
     }, {
-        title: 'Les Misérables',
-        genre: 'Historical Fiction',
-        author: 'Victor Hugo',
-        read: false
+        title: 'The Lord of the Rings',
+        isbn10: '0395193958',
+        author: 'J.R.R. Tolkien',
+        read: true
     }, {
-        title: 'The Time Machine',
+        title: 'Norwegian Wood',
         genre: 'Science Fiction',
-        author: 'H. G. Wells',
+        isbn10: '0375704027',
+        author: 'Haruki Murakami',
         read: false
     }, {
-        title: 'A Journey into the Center of the Earth',
-        genre: 'Science Fiction',
-        author: 'Jules Verne',
-        read: false
+        title: 'Microserfs',
+        isbn10: '0006548598',
+        author: 'Douglas Coupland',
+        read: true
     }, {
-        title: 'The Dark World',
-        genre: 'Fantasy',
-        author: 'Henry Kuttner',
-        read: false
+        title: 'Upcountry',
+        isbn10: '0446611913',
+        author: 'Nelson Demille',
+        read: true
     }, {
-        title: 'The Wind in the Willows',
-        genre: 'Fantasy',
-        author: 'Kenneth Grahame',
-        read: false
+        title: 'Night over Water',
+        isbn10: '0451173139',
+        author: 'Ken Follett',
+        read: true
     }, {
-        title: 'Life On The Mississippi',
-        genre: 'History',
-        author: 'Mark Twain',
-        read: false
-    }, {
-        title: 'Childhood',
-        genre: 'Biography',
-        author: 'Lev Nikolayevich Tolstoy',
-        read: false
+        title: 'The Stand',
+        isbn10: '0307947300',
+        author: 'Stephen King',
+        read: true
     }];
 
     authRouter.route('/')
@@ -56,7 +57,7 @@ var router = function(nav) {
 
     authRouter.route('/:id')
         .get(function(req, res) {
-            var id = req.params.id
+            var id = req.params.id;
             res.render('authView', {
                 title: 'Author Details',
                 nav: nav,
@@ -66,6 +67,6 @@ var router = function(nav) {
 
     return authRouter;
 
-}
+};
 
 module.exports = router;

@@ -46,6 +46,7 @@ tutorial
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
+course_notes.txt
 
 # Folder config file
 Desktop.ini
