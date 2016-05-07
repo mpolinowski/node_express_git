@@ -1,4 +1,33 @@
+https://www.pluralsight.com/courses/nodejs-express-web-applications
+
+https://github.com/marley-nodejs/Building-Web-Applications-with-Node.js-and-Express-4.0
+
+https://github.com/mpolinowski/node_express_git
+
+
+
 http://www.bootstrapzero.com/
 
 https://github.com/jonathanfmills/CodingStandards
 
+http://gitignore.io
+
+
+MONGO
+
+C:\Program Files\MongoDB\Server\3.2\bin>mongo libraryApp
+MongoDB shell version: 3.2.4
+connecting to: libraryApp
+> show collections
+books
+> db.books.find();
+{ "_id" : ObjectId("5725f568da18fc64222825e8"), "title" : "Cryptonomicon", "isbn10" : "0060512806", "author" : "Neil Stephenson", "read" : true }
+{ "_id" : ObjectId("5725f568da18fc64222825e9"), "title" : "Leviathan Wakes", "isbn10" : "0316129089", "author" : "James S.A. Corey", "read" : false }
+{ "_id" : ObjectId("5725f568da18fc64222825ea"), "title" : "The Lord of the Rings", "isbn10" : "0395193958", "author" : "J.R.R. Tolkien", "read" : true }
+{ "_id" : ObjectId("5725f568da18fc64222825eb"), "title" : "Norwegian Wood", "genre" : "Science Fiction", "isbn10" : "0375704027", "author" : "Haruki Murakami", "read" : false }
+{ "_id" : ObjectId("5725f568da18fc64222825ec"), "title" : "Microserfs", "isbn10" : "0006548598", "author" : "Douglas Coupland", "read" : true }
+{ "_id" : ObjectId("5725f568da18fc64222825ed"), "title" : "Upcountry", "isbn10" : "0446611913", "author" : "Nelson Demille", "read" : true }
+{ "_id" : ObjectId("5725f568da18fc64222825ee"), "title" : "Night over Water", "isbn10" : "0451173139", "author" : "Ken Follett", "read" : true }
+{ "_id" : ObjectId("5725f568da18fc64222825ef"), "title" : "The Stand", "isbn10" : "0307947300", "author" : "Stephen King", "read" : true }
+> db.books.remove({})
+WriteResult({ "nRemoved" : 8 })

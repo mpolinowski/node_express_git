@@ -13,7 +13,7 @@ var nav = [{
 }];
 
 var bookRouter = require('./src/routes/bookRoutes')(nav);
-var authRouter = require('./src/routes/authRoutes')(nav);
+var authorRouter = require('./src/routes/authorRoutes')(nav);
 var adminRouter = require('./src/routes/adminRoutes')(nav);
 
 app.use(express.static('public'));
@@ -22,7 +22,7 @@ app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
 app.use('/Books', bookRouter);
-app.use('/Authors', authRouter);
+app.use('/Authors', authorRouter);
 app.use('/Admin', adminRouter);
 
 app.get('/', function(req, res) {
