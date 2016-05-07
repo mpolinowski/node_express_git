@@ -8,13 +8,18 @@
     "start": "node app.js"
   },
   "author": {
-    "email": "mpolinowski@gmail.com",
+    "email": "mpolinowski.ad.g.ma.il.co.m",
     "name": "Mike Polinowski"
   },
   "dependencies": {
+    "body-parser": "^1.15.1",
+    "cookie-parser": "^1.4.1",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
-    "mongodb": "^2.1.18"
+    "express-session": "^1.13.0",
+    "mongodb": "^2.1.18",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
