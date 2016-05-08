@@ -6,49 +6,49 @@ var books = [{
     title: 'Cryptonomicon',
     isbn10: '0060512806',
     author: 'Neil Stephenson',
-    cover: 'http://ecx.images-amazon.com/images/I/414L%2BIbzcvL.jpg',
+    bookId: '816',
     read: true
 }, {
     title: 'Leviathan Wakes',
     isbn10: '0316129089',
     author: 'James S.A. Corey',
-    cover: 'http://ecx.images-amazon.com/images/I/91npjUXXkzL.jpg',
+    bookId: '9533361',
     read: false
 }, {
     title: 'The Lord of the Rings',
     isbn10: '0395193958',
     author: 'J.R.R. Tolkien',
-    cover: 'http://ecx.images-amazon.com/images/I/51eq24cRtRL.jpg',
+    bookId: '569465',
     read: true
 }, {
     title: 'Norwegian Wood',
     isbn10: '0375704027',
     author: 'Haruki Murakami',
-    cover: 'http://ecx.images-amazon.com/images/I/512ZgaaHjIL.jpg',
+    bookId: '11297',
     read: false
 }, {
     title: 'Microserfs',
     isbn10: '0006548598',
     author: 'Douglas Coupland',
-    cover: 'http://ecx.images-amazon.com/images/I/512ZD5DVC4L.jpg',
+    bookId: '2751',
     read: true
 }, {
     title: 'Up Country',
     isbn10: '0446611913',
     author: 'Nelson Demille',
-    cover: 'http://ecx.images-amazon.com/images/I/61NzLcKzBrL.jpg',
+    bookId: '33820',
     read: true
 }, {
     title: 'Night over Water',
     isbn10: '0451173139',
     author: 'Ken Follett',
-    cover: 'http://ecx.images-amazon.com/images/I/81iMLxBf9DL.jpg',
+    bookId: '967690',
     read: true
 }, {
     title: 'The Stand',
     isbn10: '0307947300',
     author: 'Stephen King',
-    cover: 'http://ecx.images-amazon.com/images/I/41IzCMjxPWL.jpg',
+    bookId: '13155183',
     read: true
 }];
 

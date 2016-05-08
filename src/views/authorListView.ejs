@@ -110,9 +110,7 @@
 
 
                         <!--/stories-->
-                        
                         <% for(var i=0; i<authors.length;i++){%>
-                        
                         <div class="row">
                             <br>
                             <div class="col-md-2 col-sm-3 text-center">
@@ -123,7 +121,7 @@
                                 <div class="row">
                                     <div class="col-xs-9">
                                         <h4><span class="label label-default"><%=authors[i].title%></span></h4>
-                                        <a href="/Authors/<%=i%>" class="btn btn-primary pull-right btnNext">More <i class="glyphicon glyphicon-chevron-right"></i></a>
+                                        <a href="/Authors/<%=authors[i]._id%>" class="btn btn-primary pull-right btnNext">More <i class="glyphicon glyphicon-chevron-right"></i></a>
                                     </div>
                                     <div class="col-xs-3"></div>
                                 </div>
@@ -132,9 +130,9 @@
                             </div>
                         </div>
                         <hr>
-                        
+
                         <%}%>
-                        
+
                         <!--/stories-->
 
                     </div>

@@ -4,58 +4,14 @@ var mongodb = require('mongodb').MongoClient;
 var objectId = require('mongodb').ObjectID;
 
 var router = function (nav) {
-
-    authorRouter.use(function (req, res, next) {
-            if (!req.user) {
-                res.redirect ('/');
-            }
-            next();
-        });
+    var authorController = require('../controllers/authorController')(null, nav);
+    authorRouter.use(authorController.middleware);
 
     authorRouter.route('/')
-        .get(function (req, res) {
-            var url =
-                'mongodb://localhost:27017/libraryApp';
-
-            mongodb.connect(url, function (err, db) {
-                var collection = db.collection('books');
-
-                collection.find({}).toArray(
-                    function (err, results) {
-                        res.render('authorListView', {
-                            title: 'Back Home',
-                            nav: nav,
-                            authors: results
-                        });
-                    }
-                );
-            });
-
-        });
+        .get(authorController.getIndex);
 
     authorRouter.route('/:id')
-        .get(function (req, res) {
-            var id = new objectId(req.params.id);
-            var url =
-                'mongodb://localhost:27017/libraryApp';
-
-            mongodb.connect(url, function (err, db) {
-                var collection = db.collection('books');
-
-                collection.findOne({_id: id},
-                    function (err, results) {
-                        res.render('authorView', {
-                            title: 'Back Home',
-                            nav: nav,
-                            authors: results
-                        });
-
-                    }
-                );
-
-            });
-
-        });
+        .get(authorController.getById);
 
     return authorRouter;
 
