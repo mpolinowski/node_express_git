@@ -5,6 +5,13 @@ var objectId = require('mongodb').ObjectID;
 
 var router = function (nav) {
 
+    authorRouter.use(function (req, res, next) {
+            if (!req.user) {
+                res.redirect ('/');
+            }
+            next();
+        });
+
     authorRouter.route('/')
         .get(function (req, res) {
             var url =
