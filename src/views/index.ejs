@@ -4,8 +4,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Storystrap Template</title>
-    <meta name="generator" content="Bootply" />
+    <title>LibraryApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!--bower:css-->
     <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -26,111 +25,119 @@
 		<![endif]-->
 </head>
 
+<!-- ################################################ Body ######################################################### -->
+
 <body>
-    <header class="navbar navbar-bright navbar-fixed-top" role="banner">
-        <div class="container">
-            <div class="navbar-header">
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="/" class="navbar-brand">
-                    <%= title %>
-                </a>
+
+    <header>
+
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="banner">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="/" class="navbar-brand">
+                        <%= title %>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <% for(var i=0; i<nav.length;i++){%>
+                            <li>
+                                <a href="<%=nav[i].Link%>">
+                                    <%= nav[i].Text %>
+                                </a>
+                            </li>
+                            <%}%>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
             </div>
-            <nav class="collapse navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav">
-                    <% for(var i=0; i<nav.length;i++){%>
-                        <li>
-                            <a href="<%=nav[i].Link%>">
-                                <%= nav[i].Text %>
-                            </a>
-                        </li>
-                        <%}%>
-                </ul>
-                <ul class="nav navbar-right navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></a>
-                        <ul class="dropdown-menu" style="padding:12px;">
-                            <form class="form-inline">
-                                <button type="submit" class="btn btn-default pull-right"><i class="glyphicon glyphicon-search"></i></button>
-                                <input type="text" class="form-control pull-left" placeholder="Search">
-                            </form>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+            <!-- /.container-fluid -->
+        </nav>
+
     </header>
 
-    <!-- /cont -->
+    <div class="clearfix" style="margin-bottom: 50px;"></div>
 
-    <div class="container">
+    <!-- ################################################ Landing ######################################################### -->
+
+    <section class="container-full">
         <div class="row">
-            <div class="col-md-12">
-                <div class="top-spacer"> </div>
+            <div class="col-lg-12 text-center v-center">
+                <h1>Library App</h1>
+                <br/>
+                <br/>
+                <p class="lead">This is the bookView.js of the library app.</p>
             </div>
-        </div>
-    </div>
-    <!-- /cont -->
+            <div class="col-xs-6 col-xs-offset-3">
+                <p class="text-justify">Unlike the bookListView.js, we are now no longer using our local installation of mongoDB, but pulling all book information (including the cover img) directly from the Goodreads API - please read on here for more information: <a href="https://www.goodreads.com/api">www.goodreads.com/api</a></p>
+                <p class="text-justify">The Goodreads API call is packaged as a service in goodreadsService.js</p>
+            </div>
 
-    </div>
+            <div class="clearfix"></div>
 
+            <!-- ################################################ Login ######################################################### -->
 
-    <div class="container">
-        <div class="row">
-
-            <div class="col-md-12">
-
-                <div class="panel">
-                    <div class="panel-body">
-
-                        <!--/stories-->
-                        <div class="row center-block">
-                            <br>
-                            <div class="col-md-offset-3 col-md-2 col-xs-12 text-center">
-                                Sign In
-                                <form name="signInForm" action="/auth/signIn" method="post">
-                                    User Name:
-                                    <input name="userName" id="userName"> Password:
-                                    <input name="password" id="password">
-                                    <input type="submit" value="Sign In">
-                                </form>
-                            </div>
-                            <div class="col-md-offset-1 col-md-2 col-xs-12 text-center">
-                                Sign Up
-                                <form name="signUpForm" action="/auth/signUp" method="post">
-                                    User Name:
-                                    <input name="userName" id="userName"> Password:
-                                    <input name="password" id="password">
-                                    <input type="submit" value="Sign Up">
-                                </form>
-                            </div>
+            <div class="col-xs-4 col-xs-offset-1" style="margin-top: 30px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-offset-3 col-sm-2 col-xs-12 text-center">
+                            <form name="signInForm" action="/auth/signIn" method="post">
+                                User Name:
+                                <input name="userName" id="userName">
+                                <br/>
+                                <br/>
+                                Password:
+                                <input name="password" id="password">
+                                <br/>
+                                <br/>
+                                <input type="submit" value="Sign In">
+                            </form>
                         </div>
-                        <br>
-                        <br>
-                    </div>
-                </div>
-                <hr>
-                <!--/stories-->
-            </div>
+
+                        <div class="clearfix visible-xs" style="margin-bottom: 20px;"></div>
+
+                        <div class="col-sm-offset-1 col-sm-2 col-xs-12 text-center">
+                            <form name="signUpForm" action="/auth/signUp" method="post">
+                                User Name:
+                                <input name="userName" id="userName">
+                                <br/>
+                                <br/>
+                                Password:
+                                <input name="password" id="password">
+                                <br/>
+                                <br/>
+                                <input type="submit" value="Sign Up">
+                            </form>
+                        </div>
+                    </div> <!-- /row -->
+                </div> <!-- /container -->
+            </div> <!-- /v-center -->
+
+            <!-- ################################################ /Login ######################################################### -->
+
         </div>
+        <!-- /row -->
+    </section>
+    <!-- /container full -->
 
-    </div>
+    <div class="clearfix" style="margin-bottom: 20px;"></div>
 
-    <hr>
+    <!-- ################################################ Footer ######################################################### -->
 
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <p class="pull-right">Built with <i class="icon-heart-empty"></i> at <a href="http://www.bootply.com">Bootply</a></p>
-                </div>
-            </div>
-        </div>
+    <footer class="container-fluid">
+        <nav class="navbar navbar-inverse navbar-fixed-bottom">
+            <div class="container"></div>
+        </nav>
     </footer>
+
 </body>
 
 </html>

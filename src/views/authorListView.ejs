@@ -4,8 +4,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Storystrap Template</title>
-    <meta name="generator" content="Bootply" />
+    <title>LibraryApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!--bower:css-->
     <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -26,162 +25,111 @@
 		<![endif]-->
 </head>
 
+<!-- ################################################ Body ######################################################### -->
+
 <body>
-    <header class="navbar navbar-bright navbar-fixed-top" role="banner">
-        <div class="container">
-            <div class="navbar-header">
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="/" class="navbar-brand">
-                    <%= title %>
-                </a>
+
+    <header>
+
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="banner">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="/" class="navbar-brand">
+                        <%= title %>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <% for(var i=0; i<nav.length;i++){%>
+                            <li>
+                                <a href="<%=nav[i].Link%>">
+                                    <%= nav[i].Text %>
+                                </a>
+                            </li>
+                            <%}%>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
             </div>
-            <nav class="collapse navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav">
-                    <% for(var i=0; i<nav.length;i++){%>
-                        <li>
-                            <a href="<%=nav[i].Link%>">
-                                <%= nav[i].Text %>
-                            </a>
-                        </li>
-                        <%}%>
-                </ul>
-                <ul class="nav navbar-right navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></a>
-                        <ul class="dropdown-menu" style="padding:12px;">
-                            <form class="form-inline">
-                                <button type="submit" class="btn btn-default pull-right"><i class="glyphicon glyphicon-search"></i></button>
-                                <input type="text" class="form-control pull-left" placeholder="Search">
-                            </form>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+            <!-- /.container-fluid -->
+        </nav>
+
     </header>
 
-    <div id="masthead">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-7">
-                    <h1>Storystrap
-          <p class="lead"></p>
-        </h1>
-                </div>
-                <div class="col-md-5">
-                    <div class="well well-lg">
-                        <div class="row">
-                            <div class="col-sm-12">
+    <div class="clearfix" style="margin-bottom: 50px;"></div>
 
+    <!-- ################################################ Landing ######################################################### -->
 
+    <section class="container-full">
+        <div class="row">
+            <div class="col-lg-12 text-center v-center">
+                <h1>Library App</h1>
+                <br/>
+                <br/>
+                <p class="lead">This is the authorListView.js of the library app.</p>
+            </div>
+            <div class="col-xs-6 col-xs-offset-3">
+                <p class="text-justify">To populate the View below we have to add books to our Mongo database. Make sure <a href="https://www.mongodb.com/">mongoDB</a> is running in the background (default port 27017) and visit <a href="http://localhost/Admin/addBooks"><strong>localhost/Admin/addBooks</strong></a> to add a book collection to our libraryApp. The book information are stored inside adminRoutes.js. Connect to mongoDB to verify the commit:</p>
+
+                <p class="text-muted">C:\Program Files\MongoDB\Server\3.2\bin > <strong>mongo libraryApp</strong><br/>
+                MongoDB shell version: 3.2.4<br/>
+                connecting to: libraryApp<br/>
+                > <strong>show collections</strong><br/>
+                books<br/>
+                users<br/>
+                > <strong>db.books.find({})</strong></p>
+
+                <p class="text-justify">You can clear the book collection with the following command (e.g. to add your own books):</p>
+
+                <p class="text-muted">> <strong>db.books.remove({})</strong></p>
+            </div>
+        </div>
+    </section>
+    <!-- /container full -->
+    <div class="clearfix" style="margin-bottom: 20px;"></div>
+    <!-- ################################################ Media ######################################################### -->
+
+    <section class="container" style="margin-bottom: 400px;">
+        <div class="row">
+            <% for(var i=0; i<authors.length;i++){%>
+                <div class="col-xs-6 col-md-4 col-lg-3 center-block" style="margin-bottom: 10px;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4><%=authors[i].author%></h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-xs-12 col-sm-4 col-lg-6">
+                                <a class="story-title" href="/Authors/<%=authors[i]._id%>"><img alt="" src="<%=authors[i].cover%>" style="height:100px" class="img-thumbnail"></a>
+                            </div>
+                            <div class="col-xs-12 col-sm-8 col-lg-6">
+                                <p><span class="label label-default"><strong><%=authors[i].title%></strong></span></p>
+                                <p><span style="font-family:courier,'new courier';" class="text-muted"><a href="/Authors/<%=authors[i]._id%>" class="text-muted">Read More</a></span></p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <%}%>
         </div>
-        <!-- /cont -->
+        <hr>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="top-spacer"> </div>
-                </div>
-            </div>
-        </div>
-        <!-- /cont -->
+    </section>
 
-    </div>
+    <!-- ################################################ Footer ######################################################### -->
 
-
-    <div class="container">
-        <div class="row">
-
-            <div class="col-md-12">
-
-                <div class="panel">
-                    <div class="panel-body">
-
-
-
-                        <!--/stories-->
-                        <% for(var i=0; i<authors.length;i++){%>
-                        <div class="row">
-                            <br>
-                            <div class="col-md-2 col-sm-3 text-center">
-                                <a class="story-title" href="#"><img alt="" src="http://api.randomuser.me/portraits/thumb/men/58.jpg" style="width:100px;height:100px" class="img-circle"></a>
-                            </div>
-                            <div class="col-md-10 col-sm-9">
-                                <h3><%=authors[i].author%></h3>
-                                <div class="row">
-                                    <div class="col-xs-9">
-                                        <h4><span class="label label-default"><%=authors[i].title%></span></h4>
-                                        <a href="/Authors/<%=authors[i]._id%>" class="btn btn-primary pull-right btnNext">More <i class="glyphicon glyphicon-chevron-right"></i></a>
-                                    </div>
-                                    <div class="col-xs-3"></div>
-                                </div>
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <hr>
-
-                        <%}%>
-
-                        <!--/stories-->
-
-                    </div>
-                </div>
-            </div>
-            <!--/col-12-->
-        </div>
-    </div>
-
-
-    <hr>
-
-    <div class="container" id="footer">
-        <div class="row">
-            <div class="col col-sm-12">
-
-                <h1>Follow Us</h1>
-                <div class="btn-group">
-                    <a class="btn btn-twitter btn-lg" href="#"><i class="icon-twitter icon-large"></i> Twitter</a>
-                    <a class="btn btn-facebook btn-lg" href="#"><i class="icon-facebook icon-large"></i> Facebook</a>
-                    <a class="btn btn-google-plus btn-lg" href="#"><i class="icon-google-plus icon-large"></i> Google+</a>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <hr>
-
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <ul class="list-inline">
-                        <li><i class="icon-facebook icon-2x"></i></li>
-                        <li><i class="icon-twitter icon-2x"></i></li>
-                        <li><i class="icon-google-plus icon-2x"></i></li>
-                        <li><i class="icon-pinterest icon-2x"></i></li>
-                    </ul>
-
-                </div>
-                <div class="col-sm-6">
-                    <p class="pull-right">Built with <i class="icon-heart-empty"></i> at <a href="http://www.bootply.com">Bootply</a></p>
-                </div>
-            </div>
-        </div>
+    <footer class="container-fluid">
+        <nav class="navbar navbar-inverse navbar-fixed-bottom">
+            <div class="container"></div>
+        </nav>
     </footer>
+
 </body>
 
 </html>
