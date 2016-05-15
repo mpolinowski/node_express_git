@@ -42,6 +42,7 @@ jspm_packages
 
 # Dependency directories
 tutorial
+_backup
 
 # Windows image file caches
 Thumbs.db

@@ -74,11 +74,11 @@
                 <h1>Library App</h1>
                 <br/>
                 <br/>
-                <p class="lead">This is the bookView.js of the library app.</p>
+                <p class="lead">This is the index.ejs of the library app.</p>
             </div>
             <div class="col-xs-6 col-xs-offset-3">
-                <p class="text-justify">Unlike the bookListView.js, we are now no longer using our local installation of mongoDB, but pulling all book information (including the cover img) directly from the Goodreads API - please read on here for more information: <a href="https://www.goodreads.com/api">www.goodreads.com/api</a></p>
-                <p class="text-justify">The Goodreads API call is packaged as a service in goodreadsService.js</p>
+                <p class="text-justify">This is a library app to keep track of your reading progress. It was developed as part of a training program to proof some general concepts and is not supposed to be fully "fleshed out". You will need node.js and mongoDB to run this web app. first start a local instance of the database on default port 27017. Then do a npm start on the app directory to start the app on port 3000. After the login (see below) head over to <a href="http://localhost:3000/Admin/addBooks">/Admin/addBooks</a> to create a book collection in mongoDB and populate it with some books. The app will use mongoDB to display information about those books, as well as the Goodreads API for a detailed view on each book.</p>
+                <p class="text-justify"><strong>First sign up a user name/password</strong> to create a user collection in mongoDB - use the back-button of your browser to come back and sign in with your new user. Passport.js is used to authorize your user to access <a href="http://localhost:3000/Books">/Books</a> and <a href="http://localhost:3000/Authors">/Authors</a>.</p>
             </div>
 
             <div class="clearfix"></div>
