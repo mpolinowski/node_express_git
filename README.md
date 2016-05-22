@@ -10,6 +10,7 @@ This App was created in several steps:
 4. [Serve Static Files](#4-serve-static-files)
 5. [Add Bower to the Project](#5-add-bower-to-the-project)
 6. [Add Gulp to the Project](#6-add-gulp-to-the-project)
+⋅⋅* [Inject Bower Dependencies with Wiredep](#inject-bower-dependencies-with-wiredep)
 
 
 
@@ -134,7 +135,9 @@ We now add a new file to tell Bower to install directly into our public director
 Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
 
 
-### 6 Add Gulp to the Project (Wiredep)
+### 6 Add Gulp to the Project
+
+## Inject Bower Dependencies with Wiredep
 
 First install Gulp with *npm install -g gulp* globally. Then install it to the app directory via *npm install --save-dev gulp* (as a development dependency). We now want to inject dependencies (css,js) to our views automatically with **wiredep** - *npm install --save-dev wiredep*.
 
@@ -208,7 +211,32 @@ Bootstrap 3 now uses LESS - we have to override the defaults to grab the CSS fil
 
 **index.html**
 
-We now have to add <!--bower:css-->, <!--bower:js-->, <!--inject:css--> and  <!--inject:js--> to our index.html template to inject the css/js dependencies, when the command *gulp inject* is run.
+We now have to add <!--bower:css--> and <!--bower:js--> to our index.html template to inject the Bower css/js dependencies, when the command *gulp inject* is run.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>LibraryApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--bower:css-->
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" /> <!-- Will be automatically injected with the command "gulp inject" -->
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css" /> <!-- Will be automatically injected with the command "gulp inject" -->
+    <!--endbower-->
+    <!-- bower:js -->
+    <script src="/lib/jquery/dist/jquery.js"></script>  <!-- Will be automatically injected with the command "gulp inject" -->
+    <script src="/lib/bootstrap/dist/js/bootstrap.js"></script> <!-- Will be automatically injected with the command "gulp inject" -->
+    <!-- endbower -->
+</head>
+```
+
+
+## Gulp Inject
+
+We now have to add <!--inject:css--> and  <!--inject:js--> to our index.html template to inject the css/js dependencies, when the command *gulp inject* is run.
 
 ```html
 <!DOCTYPE html>

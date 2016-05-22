@@ -18,9 +18,9 @@ gulp.task('inject', function() {
     };
 
     var options = {
-        bowerJson: require('./bower.json'),
-        directory: './public/lib',
-        ignorePath: '../../public'
+        bowerJson: require('./bower.json'), /*Tell wiredep to check dependencies from bower e.g. bootstrap*/
+        directory: './public/lib', /*Tell wiredep to find dependencies in the lib directory*/
+        ignorePath: '../../public' /*The path to the css/js files has to ignore ../../public*/
     };
 
     return gulp.src('./src/views/*.ejs')
