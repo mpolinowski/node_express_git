@@ -16,8 +16,9 @@ This App was created in several steps:
 7. [Add a Templating Engine - EJS](#7-add-a-templating-engine---ejs)
 8. [Adding a Page Navigation with Routing](#8-adding-a-page-navigation-with-routing)
 9. [Adding a Router for the Listview of our Book Page](#9-adding-a-router-for-the-listview-of-our-book-page)
-  * [Adding a Route to Render](#adding-a-route-to-rende)
+  * [Adding a Route to Render](#adding-a-route-to-render)
   * [Adding some Books to the Book View](#adding-some-books-to-the-book-view)
+10. [Cleaning up app.js with Routers](10_cleaning_up_the_app_file_with_routers)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -568,7 +569,7 @@ app.set('view engine', 'ejs');
 
 bookRouter.route('/')
     .get(function(req, res) {
-      res.render('books', {  /* We change res.send to res.render. Since we set views to ../src/views, the router will search for a books.ejs in this directory to render */
+      res.render('bookListView', {  /* We change res.send to res.render. Since we set views to ../src/views, the router will search for a bookListView.ejs in this directory to render */
         title: 'Home', /* We have to add nav since it is displayed on every view - we will export it later */
         list: [{Link: '/Books', Text: 'Books'},
         {Link: '/Authors', Text: 'Authors'}]
@@ -599,6 +600,126 @@ app.listen(port, function(err){
 });
 ```
 
-You can copy the index.ejs file and rename the copy to books.ejs - this file will now be rendered, when you access http://localhost:8080/Books .
+You can copy the index.ejs file and rename the copy to bookListView.ejs - this file will now be rendered, when you access http://localhost:8080/Books .
 
 #### Adding some Books to the Book View
+
+We now have a view that is rendered when we access the Books view. Now we want to use EJS to populate the view with some books. Later, those books will be added from MongoDB. Now we just hardcode some books into app.js to prove the concept:
+
+**app.js**
+
+```javascript
+var express =require('express');
+
+var app = express();
+
+var port = process.env.PORT || 3000;
+var bookRouter = express.Router();
+
+app.use(express.static('public'));
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs');
+
+var books = [{  /* Just some hardcoded books for now - later we will use MongoDB */
+    title: 'Cryptonomicon',
+    author: 'Neil Stephenson',
+    read: true
+}, {
+    title: 'Leviathan Wakes',
+    author: 'James S.A. Corey',
+    read: false
+}, {
+    title: 'The Lord of the Rings',
+    author: 'J.R.R. Tolkien',
+    read: true
+}, {
+    title: 'Norwegian Wood',
+    author: 'Haruki Murakami',
+    read: false
+}, {
+    title: 'Microserfs',
+    author: 'Douglas Coupland',
+    read: true
+}, {
+    title: 'Up Country',
+    author: 'Nelson Demille',
+    read: true
+}, {
+    title: 'Night over Water',
+    author: 'Ken Follett',
+    read: true
+}, {
+    title: 'The Stand',
+    author: 'Stephen King',
+    read: true
+}];
+
+bookRouter.route('/')
+    .get(function(req, res) {
+      res.render('bookListView', {
+        title: 'Home',
+        list: [{Link: '/Books', Text: 'Books'},
+        {Link: '/Authors', Text: 'Authors'}]
+        books: books /* passing in the book array from above - so it will be available for rendering */
+      });
+    });
+
+bookRouter.route('/Single')
+    .get(function(req, res) {
+      res.send('Hello Single Books')
+    });
+
+app.use('/Books', bookRouter);
+
+app.get('/', function(req, res){
+  res.render('index', {
+    title: 'Home',
+    list: [{Link: '/Books', Text: 'Books'},
+    {Link: '/Authors', Text: 'Authors'}]
+  });
+});
+
+app.get('/books', function(req, res){
+  res.send('Hello World from the books route')
+});
+
+app.listen(port, function(err){
+  console.log('running server on port' + port);
+});
+```
+Now we can modify our bookListview to add those books via EJS:
+
+**bookListView.ejs**
+
+```html
+<section class="container" style="margin-bottom: 400px;">
+    <div class="row">
+        <% for(var i=0; i<books.length;i++){ %> <!-- Not <%= ...  %> with the EQUAL sign it will not be executed -->
+            <div class="col-xs-6 col-md-4 col-lg-3 center-block" style="margin-bottom: 10px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><%= books[i].title %></h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-12 col-sm-4 col-lg-6">
+                            <a class="story-title" href="/Books/<%=books[i]._id%>"><img alt="" src="<%=books[i].cover%>" style="height:100px" class="img-thumbnail"></a>
+                        </div>
+                        <div class="col-xs-12 col-sm-8 col-lg-6">
+                            <p><span class="label label-default"><strong><%= books[i].author %></strong></span></p>
+                            <p><span style="font-family:courier,'new courier';" class="text-muted"><a href="/Books/<% =books[i]._id %>" class="text-muted">Read More</a></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %> <!-- Not <%= } %> with the EQUAL sign it will not be executed -->
+    </div>
+    <hr>
+
+</section>
+```
+
+When you access http://localhost:8080/Books you will see the nav bar from before, as well as a list of our books.
+
+
+### 10 Cleaning up the App File with Routers
