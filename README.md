@@ -4,8 +4,8 @@
 
 This App was created in several steps:
 
-1. [https://github.com/mpolinowski/node_express_git#1-install-nodejs-and-expressjs-to-serve-our-web-application](Install Node.js and Express.js to serve our Web Application)
-2. [#2-add-start-script](Add Start Script)
+1. [Install Node.js and Express.js to serve our Web Application](https://github.com/mpolinowski/node_express_git#1-install-nodejs-and-expressjs-to-serve-our-web-application)
+2. [Add Start Script](#2-add-start-script)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
