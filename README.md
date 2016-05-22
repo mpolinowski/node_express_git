@@ -11,8 +11,9 @@ This App was created in several steps:
 5. [Add Bower to the Project](#5-add-bower-to-the-project)
 6. [Add Gulp to the Project](#6-add-gulp-to-the-project)
   * Inject Bower Dependencies with Wiredep
-  * Gulp Inject
-
+  * Inject with Gulp-Inject
+  * Auto-restart with Nodemon
+7. [Add a Templating Engine - EJS](#6-add-gulp-to-the-project)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -235,7 +236,7 @@ We now have to add <!--bower:css--> and <!--bower:js--> to our index.html templa
 ```
 
 
-#### Gulp Inject
+#### Inject with Gulp-Inject
 
 After injecting the Bower dependencies, we now have to inject our ccs and js files from the public folder. We will use **Gulp-Inject** to perform this task. First do a *npm install --save-dev gulp inject*, to install Gulp-Inject as a development dependency.
 
@@ -307,7 +308,7 @@ We now have to add <!--inject:css--> and  <!--inject:js--> to our index.html tem
 ```
 
 
-#### Nodemon
+#### Auto-restart with Nodemon
 
 We now add **Nodemon** to monitor our node.js app - Nodemon will automatically restart the server when a change was detected. To install Nodemon type *npm install --save-dev nodemon*.
 
@@ -363,3 +364,58 @@ gulp.task('serve', ['inject'], function() { /* Create a 'serve' task to automati
         });
 });
 ```
+
+### 7 Add a Templating Engine - EJS
+
+EJS combines data and a template to produce HTML. JavaScript between <% %> is executed. JavaScript between <%= %> adds strings to your HTML and <%- %> can contain HTML formated content. To add our templating engine we first have to install it with *npm install --save ejs*. Now we add the engine to our app.js file:
+
+**app.js**
+
+```javascript
+var express =require('express');
+
+var app = express();
+
+var port = process.env.PORT || 3000; /* 'gulp serve' uses PORT 8080 - if no port is defined by the environment use port 3000 */
+
+app.use(express.static('public'));
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs'); /* Templating Engine is set to EJS */
+
+app.get('/', function(req, res){
+  res.render('index', {title: 'Rendered Title', list: ['a', 'b']}); /* This content will be displayed in the index.ejs file we´ll create next */
+});
+
+app.get('/books', function(req, res){
+  res.send('Hello World from the books route')
+});
+
+app.listen(port, function(err){
+  console.log('running server on port' + port);
+});
+```
+
+Now we create a simple index.ejs file in our src/views directory:
+
+**index.js**
+
+```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title><%= title %></title>
+    </head>
+    <body>
+      <h1><%= title %></h1>
+      <ul>
+        <%= for(var i=0; i<list.length; i++) { %>
+          <li><%= list[i] %></li>
+        <%= } %>
+      </ul>
+    </body>
+  </html>
+```
+
+Open http://localhost:8080 to check the result - EJS should fill out the title and create the unordered list with the items a and b. Now we will take the code from our template index.html code and copy it to index.ejs. EJS will later be used to display a list view of books in our library app.
