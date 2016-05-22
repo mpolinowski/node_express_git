@@ -6,7 +6,9 @@
 This App was created in several steps:
 
 
-### 1 Install Node.js and Express.js to serve our web application
+### 1 Install Node.js and Express.js to serve our Web Application
+
+First install [Node.js](https://nodejs.org/en/download/) and initialize the project with *npm init*. Then *npm install express --save* to the app directory.
 
 **app.js**
 
@@ -74,11 +76,13 @@ app.listen(port, function(err){
 ```
 
 
-### 4 Serve static files
+### 4 Serve Static Files
+
+We first add to new folders to our project - **public/css & public/js** and a **src/views** folder. We download a free Bootstrap theme from a page like bootstrapzero.com and put the css/js files into the public folder. The html file has to be located in the views folder.
 
 **app.js**
 
-We first add to new folders to our project - **public/css & public/js** and a **src/views** folder. We download a free Bootstrap theme from a page like bootstrapzero.com and put the css/js files into the public folder. The html file has to be located in the views folder. The Express middleware is used to serve the content of our public folder, by adding the line *app.use(express.static('public'));* to the app.js file. The static html file - index.html - from our template, will be served by *app.use(express.static('src/views'));*.
+The Express middleware is used to serve the content of our public folder, by adding the line *app.use(express.static('public'));* to the app.js file. The static html file - index.html - from our template, will be served by *app.use(express.static('src/views'));*.
 
 ```javascript
 var express =require('express');
@@ -103,36 +107,20 @@ app.listen(port, function(err){
 });
 ```
 
-Through the public route, we are now able to access the css/js files by typing in e.g. http://localhost:3000/css/styles.css into our browser. The index.html is accessible by http://localhost:3000/index.html.
+Through the public route, we are now able to access the css/js files by typing in e.g. http://localhost:3000/css/styles.css into our browser (the bootstrap components of the template will not be used - we Bower to add them later). The index.html is accessible by http://localhost:3000/index.html.
 
 
-### 5 Add Bower to the project
+### 5 Add Bower to the Project
 
-**app.js**
+First install Bower globally with *npm install bower -g*. Then do a *bower init* to the app directory (creation of **bower.json**).
 
-We first add to new folders to our project - **public/css & public/js** and a **src/views** folder. We download a free Bootstrap theme from a page like bootstrapzero.com and put the css/js files into the public folder. The html file has to be located in the views folder. The Express middleware is used to serve the content of our public folder, by adding the line *app.use(express.static('public'));* to the app.js file. The static html file - index.html - from our template, will be served by *app.use(express.static('src/views'));*.
+We now add a new file to tell Bower to install directly into our public directory:
+
+**.bowerrc**
+
 
 ```javascript
-var express =require('express');
-
-var app = express();
-
-var port = 3000;
-
-app.use(express.static('public'));
-app.use(express.static('src/views'));
-
-app.get('/', function(req, res){
-  res.send('Hello World')
-});
-
-app.get('/books', function(req, res){
-  res.send('Hello World from the books route')
-});
-
-app.listen(port, function(err){
-  console.log('running server on port' + port);
-});
+"directory": "public/lib"
 ```
 
-Through the public route, we are now able to access the css/js files by typing in e.g. http://localhost:3000/css/styles.css into our browser. The index.html is accessible by http://localhost:3000/index.html.
+Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
