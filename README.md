@@ -5,6 +5,7 @@
 
 This App was created in several steps:
 
+
 ### Install Node.js and Express.js to serve our web application
 
 **app.js**
@@ -24,3 +25,23 @@ app.listen(port, function(err){
 ```
 
 Running the app with *node app.js* should give you the console log that the webserver is up an running on the specified port.
+
+
+
+
+### Install Node.js and Express.js to serve our web application
+
+**Package.json**
+
+```json
+
+{
+  "name": "node-express",
+  "version": "1.0.0",
+  "description": "Library App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  ```
