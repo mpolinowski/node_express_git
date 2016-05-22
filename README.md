@@ -1,9 +1,11 @@
-# node_express_git
-##A Node/Express Library App with MongoDB (Training)
+#A Node/Express Library App with MongoDB (Training)
 
  This code is part of a training in web development with **Node.js**. **EJS** will be used as template engine for rendering HTML out of **Express**. The library application will use **MongoDB** to store information about books and authors - but will also employ the [GoodReads API] (https://www.goodreads.com/api) to provide more details on each. **Passport.js** is used for local security.
 
 This App was created in several steps:
+
+1. [https://github.com/mpolinowski/node_express_git#1-install-nodejs-and-expressjs-to-serve-our-web-application](Install Node.js and Express.js to serve our Web Application)
+2. [#2-add-start-script](Add Start Script)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -117,6 +119,22 @@ First install Bower globally with *npm install bower -g*. Then do a *bower init*
 We now add a new file to tell Bower to install directly into our public directory:
 
 **.bowerrc**
+
+
+```javascript
+"directory": "public/lib"
+```
+
+Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
+
+
+### 5 Add Gulp to the Project
+
+First install Bower globally with *npm install bower -g*. Then do a *bower init* to the app directory (creation of **bower.json**).
+
+We now add a new file to tell Bower to install directly into our public directory:
+
+**gulpfile.js**
 
 
 ```javascript
