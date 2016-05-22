@@ -4,7 +4,7 @@ var nodemon = require('gulp-nodemon');
 var jsFiles = ['*.js', 'src/**/*.js'];
 
 gulp.task('inject', function() {
-    var wiredep = require('wiredep').stream;
+    var wiredep = require('wiredep').stream; /*Use wiredep to inject css/js dependencies to views e.g. bootstrap*/
     var inject = require('gulp-inject');
 
     var injectSrc = gulp.src(['./public/css/*.css',

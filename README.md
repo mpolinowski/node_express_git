@@ -1,11 +1,16 @@
 #A Node/Express Library App with MongoDB (Training)
 
- This code is part of a training in web development with **Node.js**. **EJS** will be used as template engine for rendering HTML out of **Express**. The library application will use **MongoDB** to store information about books and authors - but will also employ the [GoodReads API] (https://www.goodreads.com/api) to provide more details on each. **Passport.js** is used for local security.
+ This code is part of a training in web development with **Node.js**. **EJS** will be used as template engine for rendering HTML out of **Express**. The library application will use **MongoDB** to store information about books and authors - but will also employ the [GoodReads API](https://www.goodreads.com/api) to provide more details on each. **Passport.js** is used for local security.
 
 This App was created in several steps:
 
-1. [Install Node.js and Express.js to serve our Web Application](https://github.com/mpolinowski/node_express_git#1-install-nodejs-and-expressjs-to-serve-our-web-application)
+1. [Install Node.js and Express.js to serve our Web Application](#1-install-nodejs-and-expressjs-to-serve-our-web-application)
 2. [Add Start Script](#2-add-start-script)
+3. [Add Routing (Hello World)](#3-add-routing-hello-world)
+4. [Serve Static Files](#4-serve-static-files)
+5. [Add Bower to the Project](#5-add-bower-to-the-project)
+6. [Add Gulp to the Project](#6-add-gulp-to-the-project)
+
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -128,17 +133,63 @@ We now add a new file to tell Bower to install directly into our public director
 Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
 
 
-### 5 Add Gulp to the Project
+### 6 Add Gulp to the Project
 
-First install Bower globally with *npm install bower -g*. Then do a *bower init* to the app directory (creation of **bower.json**).
+First install Gulp with *npm install -g gulp* globally. Then install it to the app directory via *npm install --save-dev gulp* (as a development dependency). We now want to inject dependencies (css,js) to our views automatically with **wiredep** - *npm install --save-dev wiredep*.
 
-We now add a new file to tell Bower to install directly into our public directory:
+We now add a new file to tell Gulp what to do - ignore node_modules only use files from the src directory, add dependencies with wiredep.
 
 **gulpfile.js**
 
-
 ```javascript
-"directory": "public/lib"
+var gulp = require('gulp');
+
+var jsFiles = ['*.js', 'src/**/*.js'];
+
+gulp.task('inject', function() {
+    var wiredep = require('wiredep').stream; /* Use wiredep to inject css/js dependencies to views e.g. bootstrap */
+
+    var options = {
+        bowerJson: require('./bower.json'), /* Tell wiredep to check dependencies from the bower.json file e.g. bootstrap */
+        directory: './public/lib', /* Tell wiredep to find dependencies in the lib directory. It will search for the json file - e.g. ./public/lib/bootstrap/.bower.json */
+        ignorePath: '../../public' /* The path to the css/js files has to be given relative to the public folder - e.g. (../../public/)/lib/bootstrap/dist/css/bootstrap.min.css*/
+    };
+
+    return gulp.src('./src/views/*.html')
+        .pipe(wiredep(options))
+        .pipe(gulp.dest('./src/views'));
+});
 ```
 
-Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
+**index.html**
+
+We now have to add <!--bower:css-->, <!--bower:js-->, <!--inject:css--> and  <!--inject:js--> to our index.html template to inject the css/js dependencies, when the command *gulp inject* is run.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>LibraryApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--bower:css-->
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" /> <!-- Will be automatically injected with the command "gulp inject" -->
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css" /> <!-- Will be automatically injected with the command "gulp inject" -->
+    <!--endbower-->
+    <!-- bower:js -->
+    <script src="/lib/jquery/dist/jquery.js"></script>  <!-- Will be automatically injected with the command "gulp inject" -->
+    <script src="/lib/bootstrap/dist/js/bootstrap.js"></script> <!-- Will be automatically injected with the command "gulp inject" -->
+    <!-- endbower -->
+    <!-- inject:css-->
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Will be automatically injected with the command "gulp inject" -->
+    <!-- endinject-->
+    <!--inject:js-->
+    <script src="/js/default.js"></script> <!-- Will be automatically injected with the command "gulp inject" -->
+    <!--endinject-->
+    <!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+</head>
+```
