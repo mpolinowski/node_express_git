@@ -6,7 +6,7 @@ var session = require('express-session');
 
 var app = express();
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3000; /* Use the port defined by the environment (gulp serve defines port 8080) - if undefined use port 3000 */
 
 var nav = [{
     Link: '/Books',

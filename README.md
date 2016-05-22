@@ -10,8 +10,8 @@ This App was created in several steps:
 4. [Serve Static Files](#4-serve-static-files)
 5. [Add Bower to the Project](#5-add-bower-to-the-project)
 6. [Add Gulp to the Project](#6-add-gulp-to-the-project)
-  * [Inject Bower Dependencies with Wiredep](#inject-bower-dependencies-with-wiredep)
-  * [Gulp Inject](#gulp-inject)  
+  * Inject Bower Dependencies with Wiredep
+  * Gulp Inject
 
 
 
@@ -117,7 +117,7 @@ app.listen(port, function(err){
 });
 ```
 
-Through the public route, we are now able to access the css/js files by typing in e.g. http://localhost:3000/css/styles.css into our browser (the bootstrap components of the template will not be used - we Bower to add them later). The index.html is accessible by http://localhost:3000/index.html.
+Through the public route, we are now able to access the css/js files by typing in e.g. http://localhost:3000/css/styles.css into our browser (the bootstrap components of the template will not be used - we Bower to add them later - **DELETE THOSE FILES FOR STEP 6**). The index.html is accessible by http://localhost:3000/index.html.
 
 
 ### 5 Add Bower to the Project
@@ -237,7 +237,45 @@ We now have to add <!--bower:css--> and <!--bower:js--> to our index.html templa
 
 #### Gulp Inject
 
-We now have to add <!--inject:css--> and  <!--inject:js--> to our index.html template to inject the css/js dependencies, when the command *gulp inject* is run.
+After injecting the Bower dependencies, we now have to inject our ccs and js files from the public folder. We will use **Gulp-Inject** to perform this task. First do a *npm install --save-dev gulp inject*, to install Gulp-Inject as a development dependency.
+
+We now add Gulp-Inject to our gulpfile.js:
+
+**gulpfile.js**
+
+```javascript
+var gulp = require('gulp');
+
+var jsFiles = ['*.js', 'src/**/*.js'];
+
+gulp.task('inject', function() {
+    var wiredep = require('wiredep').stream;
+    var inject = require('gulp-inject'); /* Use gulp-inject to inject our personal css/js dependencies to views */
+
+    var injectSrc = gulp.src(['./public/css/*.css', /* Tell gulp-inject where our personal css/js dependencies are located */
+        './public/js/*.js'
+    ], {
+        read: false /* We only need the path not content */
+    });
+
+    var injectOptions = {
+        ignorePath: '/public' /* Tell gulp-inject to use a path relative to /public */
+    };
+
+    var options = {
+        bowerJson: require('./bower.json'),
+        directory: './public/lib',
+        ignorePath: '../../public'
+    };
+
+    return gulp.src('./src/views/*.html')
+        .pipe(wiredep(options))
+        .pipe(inject(injectSrc, injectOptions)) /* Use gulp-inject to inject our personal css/js dependencies to views */
+        .pipe(gulp.dest('./src/views'));
+});
+```
+
+We now have to add <!--inject:css--> and  <!--inject:js--> to our index.html template to inject our css/js dependencies, when the command *gulp inject* is run.
 
 ```html
 <!DOCTYPE html>
@@ -266,4 +304,62 @@ We now have to add <!--inject:css--> and  <!--inject:js--> to our index.html tem
 			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 </head>
+```
+
+
+#### Nodemon
+
+We now add **Nodemon** to monitor our node.js app - Nodemon will automatically restart the server when a change was detected. To install Nodemon type *npm install --save-dev nodemon*.
+
+We now add Nodemon to our gulpfile.js:
+
+**gulpfile.js**
+
+```javascript
+var gulp = require('gulp');
+var nodemon = require('gulp-nodemon'); /* Add nodemon to automatically restart the server, when a change was detected */
+
+var jsFiles = ['*.js', 'src/**/*.js'];
+
+gulp.task('inject', function() {
+    var wiredep = require('wiredep').stream;
+    var inject = require('gulp-inject');
+
+    var injectSrc = gulp.src(['./public/css/*.css',
+        './public/js/*.js'
+    ], {
+        read: false
+    });
+
+    var injectOptions = {
+        ignorePath: '/public'
+    };
+
+    var options = {
+        bowerJson: require('./bower.json'),
+        directory: './public/lib',
+        ignorePath: '../../public'
+    };
+
+    return gulp.src('./src/views/*.html')
+        .pipe(wiredep(options))
+        .pipe(inject(injectSrc, injectOptions))
+        .pipe(gulp.dest('./src/views'));
+});
+
+gulp.task('serve', ['inject'], function() { /* Create a 'serve' task to automatically execute the 'inject' function above on start-up */
+    var options = { /* In the line above we used an Object for the 'inject' function - here you can add more functions to be executed */
+        script: 'app.js',  /* 'serve' starts our app.js on 'PORT' and nodemon restarts it when 'jsFiles' are changed */
+        delayTime: 1,
+        env: {
+            'PORT': 8080  /* Environment variables e.g. database connection strings */
+        },
+        watch: jsFiles
+    };
+
+    return nodemon(options)
+        .on('restart', function(ev) {
+            console.log('Restarting...');
+        });
+});
 ```
