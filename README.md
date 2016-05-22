@@ -29,11 +29,11 @@ Running the app with *node app.js* should give you the console log that the webs
 
 
 
-### Install Node.js and Express.js to serve our web application
+### Add Start Script
 
-**Package.json**
+**package.json**
 
-```json
+```javascript
 
 {
   "name": "node-express",
@@ -45,3 +45,5 @@ Running the app with *node app.js* should give you the console log that the webs
     "start": "node app.js"
   },
   ```
+
+The line *"start": "node app.js"* allows us to use the **npm start** command instead of having to define our starting point like before - *node app.js*
