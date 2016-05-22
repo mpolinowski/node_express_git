@@ -14,7 +14,10 @@ This App was created in several steps:
   * [Inject with Gulp-Inject](#inject-with-gulp-inject)
   * [Auto-restart with Nodemon](#auto-restart-with-nodemon)
 7. [Add a Templating Engine - EJS](#7-add-a-templating-engine---ejs)
-8. [Adding a Page Navigation with Routing](#7-adding-a-page-navigation-with-routing)
+8. [Adding a Page Navigation with Routing](#8-adding-a-page-navigation-with-routing)
+9. [Adding a Router for the Listview of our Book Page](#9-adding-a-router-for-the-listview-of-our-book-page)
+  * [Adding a Route to Render](#adding-a-route-to-rende)
+  * [Adding some Books to the Book View](#adding-some-books-to-the-book-view)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -422,4 +425,180 @@ Now we create a simple index.ejs file in our src/views directory:
 Open http://localhost:8080/ to check the result - EJS should fill out the title and create the unordered list with the items a and b. Now we will take the code from our template index.html code and copy it to index.ejs. EJS will later be used to display a list view of books in our library app.
 
 
-### 7 Adding a Page Navigation with Routing
+### 8 Adding a Page Navigation with Routing
+
+We want to add two routes to our navigation bar - one for authors and one for books. In the final version of the library app, this will display all books either by their author or book title. We will create those routes in the app.js file and add the navigation to our navbar using EJS.
+
+**app.js**
+
+```javascript
+var express =require('express');
+
+var app = express();
+
+var port = process.env.PORT || 3000;
+
+app.use(express.static('public'));
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs');
+
+app.get('/', function(req, res){
+  res.render('index', {
+    title: 'Home',
+    list: [{Link: '/Books', Text: 'Books'}, /* We change the list from before to a nav element */
+    {Link: '/Authors', Text: 'Authors'}]
+  });
+});
+
+app.get('/books', function(req, res){
+  res.send('Hello World from the books route')
+});
+
+app.listen(port, function(err){
+  console.log('running server on port' + port);
+});
+```
+
+
+**index.ejs**
+
+```html
+<header>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="banner">
+        <div class="container-fluid">
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">
+                    <%= title %> <!-- Adding nav element from app.js -->
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <% for(var i=0; i<nav.length;i++){%> <!-- Adding nav element from app.js -->
+                        <li>
+                            <a href="<%=nav[i].Link%>"> <!-- Adding nav element from app.js -->
+                                <%= nav[i].Text %> <!-- Adding nav element from app.js -->
+                            </a>
+                        </li>
+                        <%}%>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</header>
+```
+
+
+### 9 Adding a Router for the Listview of our Book Page
+
+#### Adding a Route to Render
+
+We want to group all routes for the Book pages under one Router - later we will simply export this router from a separate file to app.js.
+
+**app.js**
+
+```javascript
+var express =require('express');
+
+var app = express();
+
+var port = process.env.PORT || 3000;
+var bookRouter = express.Router(); /* Creating a Router for all Book Routes */
+
+app.use(express.static('public'));
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs');
+
+bookRouter.route('/') /* When you go to /Books you will get the response 'Hello Books' */
+    .get(function(req, res) {
+      res.send('Hello Books')
+    });
+
+bookRouter.route('/Single') /* When you go to /Books/Single you will get the response 'Hello Single Books' */
+    .get(function(req, res) {
+      res.send('Hello Single Books')
+    });
+
+app.use('/Books', bookRouter); /* bookRouter will be used once you go to /Books*/
+
+app.get('/', function(req, res){
+  res.render('index', {
+    title: 'Home',
+    list: [{Link: '/Books', Text: 'Books'},
+    {Link: '/Authors', Text: 'Authors'}]
+  });
+});
+
+app.get('/books', function(req, res){
+  res.send('Hello World from the books route')
+});
+
+app.listen(port, function(err){
+  console.log('running server on port' + port);
+});
+```
+
+bookRouter now sends us a string 'Hello Books' or 'Hello Single Books' when we go to http://localhost:8080/Books or http://localhost:8080/Books/Single . We now want to render different views when we access those URLs.
+
+**app.js**
+
+```javascript
+var express =require('express');
+
+var app = express();
+
+var port = process.env.PORT || 3000;
+var bookRouter = express.Router();
+
+app.use(express.static('public'));
+
+app.set('views', './src/views'); /* The render function requires an EJS file here to render */
+app.set('view engine', 'ejs');
+
+bookRouter.route('/')
+    .get(function(req, res) {
+      res.render('books', {  /* We change res.send to res.render. Since we set views to ../src/views, the router will search for a books.ejs in this directory to render */
+        title: 'Home', /* We have to add nav since it is displayed on every view - we will export it later */
+        list: [{Link: '/Books', Text: 'Books'},
+        {Link: '/Authors', Text: 'Authors'}]
+      });
+    });
+
+bookRouter.route('/Single')
+    .get(function(req, res) {
+      res.send('Hello Single Books')
+    });
+
+app.use('/Books', bookRouter);
+
+app.get('/', function(req, res){
+  res.render('index', {
+    title: 'Home',
+    list: [{Link: '/Books', Text: 'Books'},
+    {Link: '/Authors', Text: 'Authors'}]
+  });
+});
+
+app.get('/books', function(req, res){
+  res.send('Hello World from the books route')
+});
+
+app.listen(port, function(err){
+  console.log('running server on port' + port);
+});
+```
+
+You can copy the index.ejs file and rename the copy to books.ejs - this file will now be rendered, when you access http://localhost:8080/Books .
+
+#### Adding some Books to the Book View
