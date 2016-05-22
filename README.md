@@ -10,7 +10,8 @@ This App was created in several steps:
 4. [Serve Static Files](#4-serve-static-files)
 5. [Add Bower to the Project](#5-add-bower-to-the-project)
 6. [Add Gulp to the Project](#6-add-gulp-to-the-project)
-⋅⋅* [Inject Bower Dependencies with Wiredep](#inject-bower-dependencies-with-wiredep)
+  * [Inject Bower Dependencies with Wiredep](#inject-bower-dependencies-with-wiredep)
+  * [Gulp Inject](#gulp-inject)  
 
 
 
@@ -137,7 +138,7 @@ Next we *bower install bootstrap font-awesome --save* to get the latest stable v
 
 ### 6 Add Gulp to the Project
 
-## Inject Bower Dependencies with Wiredep
+#### Inject Bower Dependencies with Wiredep
 
 First install Gulp with *npm install -g gulp* globally. Then install it to the app directory via *npm install --save-dev gulp* (as a development dependency). We now want to inject dependencies (css,js) to our views automatically with **wiredep** - *npm install --save-dev wiredep*.
 
@@ -234,7 +235,7 @@ We now have to add <!--bower:css--> and <!--bower:js--> to our index.html templa
 ```
 
 
-## Gulp Inject
+#### Gulp Inject
 
 We now have to add <!--inject:css--> and  <!--inject:js--> to our index.html template to inject the css/js dependencies, when the command *gulp inject* is run.
 
