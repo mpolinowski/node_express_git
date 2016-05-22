@@ -40,7 +40,7 @@ Running the app with *node app.js* should give you the console log that the webs
 
 **package.json**
 
-```javascript
+```json
 
 {
   "name": "node-express",
@@ -50,8 +50,9 @@ Running the app with *node app.js* should give you the console log that the webs
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
-  },
-  ```
+  }
+}
+```
 
 The line *"start": "node app.js"* allows us to use the **npm start** command instead of having to define our starting point like before - *node app.js*
 
@@ -133,7 +134,7 @@ We now add a new file to tell Bower to install directly into our public director
 Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
 
 
-### 6 Add Gulp to the Project
+### 6 Add Gulp to the Project (Wiredep)
 
 First install Gulp with *npm install -g gulp* globally. Then install it to the app directory via *npm install --save-dev gulp* (as a development dependency). We now want to inject dependencies (css,js) to our views automatically with **wiredep** - *npm install --save-dev wiredep*.
 
@@ -159,6 +160,50 @@ gulp.task('inject', function() {
         .pipe(wiredep(options))
         .pipe(gulp.dest('./src/views'));
 });
+```
+
+Bootstrap 3 now uses LESS - we have to override the defaults to grab the CSS files instead and add them to our index.html. The main **overrides** can be added to the global bower.json file. This way the bower.json file inside public/lib/bootstrap and public/lib/font-awesome will be ignored.
+
+**bower.json**
+
+```json
+{
+  "name": "node-express",
+  "description": "node express test",
+  "main": "app.js",
+  "authors": [
+    "[object Object]"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "font-awesome": "^4.6.1"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/js/bootstrap.js",
+        "dist/css/bootstrap.min.css",
+        "dist/less/bootstrap.less"
+      ]
+    },
+    "font-awesome": {
+      "main": [
+        "less/font-awesome.less",
+        "css/font-awesome.min.css",
+        "scss/font-awesome.scss"
+      ]
+    }
+  }
+}
 ```
 
 **index.html**
