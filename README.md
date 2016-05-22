@@ -10,10 +10,11 @@ This App was created in several steps:
 4. [Serve Static Files](#4-serve-static-files)
 5. [Add Bower to the Project](#5-add-bower-to-the-project)
 6. [Add Gulp to the Project](#6-add-gulp-to-the-project)
-  * Inject Bower Dependencies with Wiredep
-  * Inject with Gulp-Inject
-  * Auto-restart with Nodemon
-7. [Add a Templating Engine - EJS](#6-add-gulp-to-the-project)
+  * [Inject Bower Dependencies with Wiredep](#inject-bower-dependencies-with-wiredep)
+  * [Inject with Gulp-Inject](#inject-with-gulp-inject)
+  * [Auto-restart with Nodemon](#auto-restart-with-nodemon)
+7. [Add a Templating Engine - EJS](#7-add-a-templating-engine---ejs)
+8. [Adding a Page Navigation with Routing](#7-adding-a-page-navigation-with-routing)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -418,4 +419,7 @@ Now we create a simple index.ejs file in our src/views directory:
   </html>
 ```
 
-Open http://localhost:8080 to check the result - EJS should fill out the title and create the unordered list with the items a and b. Now we will take the code from our template index.html code and copy it to index.ejs. EJS will later be used to display a list view of books in our library app.
+Open http://localhost:8080/ to check the result - EJS should fill out the title and create the unordered list with the items a and b. Now we will take the code from our template index.html code and copy it to index.ejs. EJS will later be used to display a list view of books in our library app.
+
+
+### 7 Adding a Page Navigation with Routing
