@@ -748,8 +748,7 @@ var express = require('express');
 
 var bookRouter = express.Router();
 
-var router = function(){
-    var books = [
+var books = [
     {
         title: 'War and Peace',
         genre: 'Historical Fiction',
@@ -815,9 +814,8 @@ var router = function(){
         });
     });
 
-    return bookRouter;
 }
-module.exports = router; /* the router has to be exported to be available for require in app.js */
+module.exports = bookRouter; /* the bookRouter has to be exported to be available for require in app.js */
 ```
 
 **app.js**
@@ -874,7 +872,185 @@ var express = require('express');
 
 var bookRouter = express.Router();
 
-var router = function(){
+var books = [
+    {
+        title: 'War and Peace',
+        genre: 'Historical Fiction',
+        author: 'Lev Nikolayevich Tolstoy',
+        read: false
+        },
+    {
+        title: 'Les Misérables',
+        genre: 'Historical Fiction',
+        author: 'Victor Hugo',
+        read: false
+        },
+    {
+        title: 'The Time Machine',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+        },
+    {
+        title: 'A Journey into the Center of the Earth',
+        genre: 'Science Fiction',
+        author: 'Jules Verne',
+        read: false
+        },
+    {
+        title: 'The Dark World',
+        genre: 'Fantasy',
+        author: 'Henry Kuttner',
+        read: false
+        },
+    {
+        title: 'The Wind in the Willows',
+        genre: 'Fantasy',
+        author: 'Kenneth Grahame',
+        read: false
+        },
+    {
+        title: 'Life On The Mississippi',
+        genre: 'History',
+        author: 'Mark Twain',
+        read: false
+        },
+    {
+        title: 'Childhood',
+        genre: 'Biography',
+        author: 'Lev Nikolayevich Tolstoy',
+        read: false
+        }
+];
+
+
+bookRouter.route('/')
+    .get(function (req, res) {
+        res.render('bookListView', {
+            title: 'Books',
+            nav: [{
+                Link: '/Books',
+                Text: 'Books'
+            }, {
+                Link: '/Authors',
+                Text: 'Authors'
+            }]
+        });
+    });
+
+    bookRouter.route('/:id')  /* We want to be able to access detailed info about a single book by adding the book ID - /Books/:id */
+    .get(function (req, res) {
+        var id = req.params.id; /* the id variable will be retrieved from books[id] */
+        res.render('bookView', {  /* We have to create another view for the single book - bookView.ejs */
+            title: 'Books',
+            nav: [{
+                Link: '/Books',
+                Text: 'Books'
+            }, {
+                Link: '/Authors',
+                Text: 'Authors'
+            }]
+            book: books[id]
+        });
+    });
+
+}
+module.exports = bookRouter;
+```
+
+Now we need to write the view to be rendered bookView.ejs (the code below only contains the body part - the header is identical to bookListView.ejs):
+
+**bookView.ejs**
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Library App</title>
+  </head>
+  <body>
+    <section class="container" style="margin-bottom: 300px;">
+        <div class="row">
+            <div class="col-xs-12 center-block">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><%= book.title %></h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-12 col-sm-2 col-lg-1">
+                            <a class="story-title"><img alt="Book Cover" src="<%=book.book.image_url%>" class="img-responsive"></a>
+                        </div>
+                        <div class="col-xs-12 col-sm-10 col-lg-11">
+                            <h4><span class="label label-default"><strong><%= book.author %></strong></span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  </body>
+</html>
+```
+
+
+### 12 Cleaning up our routes by creating a variable for the NAV element
+___
+
+We created a navbar in all our views and used EJS to inject some navigational elements in there. But we don´t want to have to copy it into every route. We will create a nav element in app.js instead.
+
+**app.js**
+
+```javascript
+var express = require('express');
+
+var app = express();
+
+var port = process.env.PORT || 5000;
+var nav = [{                           /* We create a NAV element in app.js - this is now available for all routes */
+    Link: '/Books',
+    Text: 'Book'
+    }, {
+    Link: '/Authors',
+    Text: 'Author'
+    }];
+var bookRouter = require('./src/routes/bookRoutes')(nav); /* The NAV element is now automatically passed into bookRouter to be available on all bookRoutes */
+
+app.use(express.static('public'));
+app.set('views', './src/views');
+
+app.set('view engine', 'ejs');
+
+
+app.use('/Books', bookRouter);
+
+app.get('/', function (req, res) {
+    res.render('index', {
+        title: 'Home',
+        nav: nav     /* We no longer have to type in the whole navigation - YEAH!*/
+    });
+});
+
+app.get('/books', function (req, res) {
+    res.send('Hello Books');
+});
+
+app.listen(port, function (err) {
+    console.log('running server on port ' + port);
+});
+```
+
+**bookRoutes.js**
+
+Now we have to wrap our routes into a router function with NAV as a variable, to make it available to those routes:
+
+```javascript
+var express = require('express');
+
+var bookRouter = express.Router();
+
+var router = function(nav){ /* The router is wrapped into a function with NAV as a variable */
     var books = [
     {
         title: 'War and Peace',
@@ -924,82 +1100,27 @@ var router = function(){
         author: 'Lev Nikolayevich Tolstoy',
         read: false
         }
-
-
+    ];
     bookRouter.route('/')
     .get(function (req, res) {
         res.render('bookListView', {
             title: 'Books',
-            nav: [{
-                Link: '/Books',
-                Text: 'Books'
-            }, {
-                Link: '/Authors',
-                Text: 'Authors'
-            }]
+            nav: nav,         /* All routes wrapped into router function can now use NAV as a variable */
+            books: books
+        });
     });
 
-    bookRouter.route('/:id')  /* We want to be able to access detailed info about a single book by adding the book ID - /Books/:id */
+    bookRouter.route('/:id')
     .get(function (req, res) {
-        var id = req.params.id; /* the id variable will be retrieved from books[id] */
-        res.render('bookView', {  /* We have to create another view for the single book - bookView.ejs */
+        var id = req.params.id;
+        res.render('bookView', {
             title: 'Books',
-            nav: [{
-                Link: '/Books',
-                Text: 'Books'
-            }, {
-                Link: '/Authors',
-                Text: 'Authors'
-            }]
+            nav: nav, /* All routes wrapped into router function can now use NAV as a variable */
             book: books[id]
         });
     });
 
-    return bookRouter;
+    return bookRouter; /* bookRouter has now to be returned from our router function */
 }
-module.exports = router;
+module.exports = router;  /* We now have to export the router instead of bookRouter */
 ```
-
-Now we need to write the view to be rendered bookView.ejs (the code below only contains the body part - the header is identical to bookListView.ejs):
-
-**bookView.ejs**
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Library App</title>
-  </head>
-  <body>
-    <section class="container" style="margin-bottom: 300px;">
-        <div class="row">
-            <div class="col-xs-12 center-block">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><%= book.title %></h4>
-                    </div>
-                    <div class="panel-body">
-                        <div class="col-xs-12 col-sm-2 col-lg-1">
-                            <a class="story-title"><img alt="Book Cover" src="<%=book.book.image_url%>" class="img-responsive"></a>
-                        </div>
-                        <div class="col-xs-12 col-sm-10 col-lg-11">
-                            <h4><span class="label label-default"><strong><%= book.author %></strong></span></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-  </body>
-</html>
-```
-
-
-### 12 Cleaning up our routes by creating a variable for the NAV element
-___
-
-We created a navbar in all our views and used EJS to inject some navigational elements in there. But we don´t want to have to copy it into every route. We will create a nav element in app.js instead.
-
-**app.js**
