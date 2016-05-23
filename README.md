@@ -20,7 +20,7 @@ This App was created in several steps:
   * [Adding a Route to Render](#adding-a-route-to-render)
   * [Adding some Books to the Book View](#adding-some-books-to-the-book-view)
 10. [Cleaning up app.js with Routers](#10_cleaning_up_the_app_file_with_routers)
-11. [Creating a Single Book by ID Route & View](#11-creating-a-single-book-by-id-route-&-view)
+11. [Creating a Single Book by ID Route & View](#11-creating-a-single-book-by-id-route--view)
 12. [Cleaning up our routes by creating a variable for the NAV element](#12-cleaning-up-our-routes-by-creating-a-variable-for-the-nav-element)
 
 
@@ -748,7 +748,7 @@ var express = require('express');
 
 var bookRouter = express.Router();
 
-var router = function(nav){
+var router = function(){
     var books = [
     {
         title: 'War and Peace',
@@ -799,11 +799,18 @@ var router = function(nav){
         read: false
         }
     ];
+
     bookRouter.route('/') /* route accessed via /Books - bookListView.ejs will be rendered and populated with title, nav and books */
     .get(function (req, res) {
         res.render('bookListView', {
             title: 'Books',
-            nav: nav,
+            nav: [{
+                Link: '/Books',
+                Text: 'Books'
+            }, {
+                Link: '/Authors',
+                Text: 'Authors'
+            }],
             books: books
         });
     });
@@ -821,14 +828,8 @@ var express = require('express');
 var app = express();
 
 var port = process.env.PORT || 5000;
-var nav = [{
-    Link: '/Books',
-    Text: 'Book'
-    }, {
-    Link: '/Authors',
-    Text: 'Author'
-    }];
-var bookRouter = require('./src/routes/bookRoutes')(nav); /* We now require the book routes that we moved to bookRouter.js*/
+
+var bookRouter = require('./src/routes/bookRoutes'); /* We now require the book routes that we moved to bookRouter.js*/
 
 app.use(express.static('public'));
 app.set('views', './src/views');
@@ -840,7 +841,7 @@ app.use('/Books', bookRouter); /* bookRouter is called here when you access /Boo
 
 app.get('/', function (req, res) {
     res.render('index', {
-        title: 'Hello from render',
+        title: 'Books',
         nav: [{
             Link: '/Books',
             Text: 'Books'
@@ -873,7 +874,7 @@ var express = require('express');
 
 var bookRouter = express.Router();
 
-var router = function(nav){
+var router = function(){
     var books = [
     {
         title: 'War and Peace',
@@ -923,14 +924,19 @@ var router = function(nav){
         author: 'Lev Nikolayevich Tolstoy',
         read: false
         }
-    ];
+
+
     bookRouter.route('/')
     .get(function (req, res) {
         res.render('bookListView', {
             title: 'Books',
-            nav: nav,
-            books: books
-        });
+            nav: [{
+                Link: '/Books',
+                Text: 'Books'
+            }, {
+                Link: '/Authors',
+                Text: 'Authors'
+            }]
     });
 
     bookRouter.route('/:id')  /* We want to be able to access detailed info about a single book by adding the book ID - /Books/:id */
@@ -938,7 +944,13 @@ var router = function(nav){
         var id = req.params.id; /* the id variable will be retrieved from books[id] */
         res.render('bookView', {  /* We have to create another view for the single book - bookView.ejs */
             title: 'Books',
-            nav: nav,
+            nav: [{
+                Link: '/Books',
+                Text: 'Books'
+            }, {
+                Link: '/Authors',
+                Text: 'Authors'
+            }]
             book: books[id]
         });
     });
@@ -985,9 +997,9 @@ Now we need to write the view to be rendered bookView.ejs (the code below only c
 ```
 
 
-### 12 Cleaning up our routes by creating a variable for the nav element
+### 12 Cleaning up our routes by creating a variable for the NAV element
 ___
 
-Now we want to add another route to a detailed view of a single books. The Route should be accessible by /Books/:id (ID of the book inside the hardcoded books object - later we will pull an ID from MongoDB). The view rendered will be bookView.ejs.
+We created a navbar in all our views and used EJS to inject some navigational elements in there. But we don´t want to have to copy it into every route. We will create a nav element in app.js instead.
 
-**bookRoutes.js**
+**app.js**
