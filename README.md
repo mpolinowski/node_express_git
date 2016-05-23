@@ -1,4 +1,5 @@
 #A Node/Express Library App with MongoDB (Training)
+___
 
  This code is part of a training in web development with **Node.js**. **EJS** will be used as template engine for rendering HTML out of **Express**. The library application will use **MongoDB** to store information about books and authors - but will also employ the [GoodReads API](https://www.goodreads.com/api) to provide more details on each. **Passport.js** is used for local security.
 
@@ -22,6 +23,7 @@ This App was created in several steps:
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
+___
 
 First install [Node.js](https://nodejs.org/en/download/) and initialize the project with *npm init*. Then *npm install express --save* to the app directory.
 
@@ -45,6 +47,7 @@ Running the app with *node app.js* should give you the console log that the webs
 
 
 ### 2 Add Start Script
+___
 
 **package.json**
 
@@ -66,6 +69,7 @@ The line *"start": "node app.js"* allows us to use the **npm start** command ins
 
 
 ### 3 Add Routing (Hello World)
+___
 
 **app.js**
 
@@ -93,6 +97,7 @@ app.listen(port, function(err){
 
 
 ### 4 Serve Static Files
+___
 
 We first add to new folders to our project - **public/css & public/js** and a **src/views** folder. We download a free Bootstrap theme from a page like bootstrapzero.com and put the css/js files into the public folder. The html file has to be located in the views folder.
 
@@ -127,6 +132,7 @@ Through the public route, we are now able to access the css/js files by typing i
 
 
 ### 5 Add Bower to the Project
+___
 
 First install Bower globally with *npm install bower -g*. Then do a *bower init* to the app directory (creation of **bower.json**).
 
@@ -142,7 +148,9 @@ We now add a new file to tell Bower to install directly into our public director
 Next we *bower install bootstrap font-awesome --save* to get the latest stable version of the framework (add *bower_components* bootstrap + jquery). They will be installed to the lib directory in our public folder. The bootstrap/jquery/font-awesome files can now be added to the template index.html by linking e.g. *<link href="lib/dist/css/bootstrap.min.css" rel="stylesheet">*.
 
 
+
 ### 6 Add Gulp to the Project
+___
 
 #### Inject Bower Dependencies with Wiredep
 
@@ -370,7 +378,9 @@ gulp.task('serve', ['inject'], function() { /* Create a 'serve' task to automati
 });
 ```
 
+
 ### 7 Add a Templating Engine - EJS
+___
 
 EJS combines data and a template to produce HTML. JavaScript between <% %> is executed. JavaScript between <%= %> adds strings to your HTML and <%- %> can contain HTML formated content. To add our templating engine we first have to install it with *npm install --save ejs*. Now we add the engine to our app.js file:
 
@@ -427,6 +437,7 @@ Open http://localhost:8080/ to check the result - EJS should fill out the title 
 
 
 ### 8 Adding a Page Navigation with Routing
+___
 
 We want to add two routes to our navigation bar - one for authors and one for books. In the final version of the library app, this will display all books either by their author or book title. We will create those routes in the app.js file and add the navigation to our navbar using EJS.
 
@@ -501,6 +512,7 @@ app.listen(port, function(err){
 
 
 ### 9 Adding a Router for the Listview of our Book Page
+___
 
 #### Adding a Route to Render
 
@@ -723,3 +735,4 @@ When you access http://localhost:8080/Books you will see the nav bar from before
 
 
 ### 10 Cleaning up the App File with Routers
+___
