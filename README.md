@@ -22,6 +22,7 @@ This App was created in several steps:
 10. [Cleaning up app.js with Routers](#10_cleaning_up_the_app_file_with_routers)
 11. [Creating a Single Book by ID Route & View](#11-creating-a-single-book-by-id-route--view)
 12. [Cleaning up our routes by creating a variable for the NAV element](#12-cleaning-up-our-routes-by-creating-a-variable-for-the-nav-element)
+13. [Adding MongoDB](#13-adding-mongodb)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -940,7 +941,7 @@ bookRouter.route('/')
 
     bookRouter.route('/:id')  /* We want to be able to access detailed info about a single book by adding the book ID - /Books/:id */
     .get(function (req, res) {
-        var id = req.params.id; /* the id variable will be retrieved from books[id] */
+        var id = req.params.id; /* pass id parameter into URL - will be retrieved from books[id] */
         res.render('bookView', {  /* We have to create another view for the single book - bookView.ejs */
             title: 'Books',
             nav: [{
@@ -1122,5 +1123,11 @@ var router = function(nav){ /* The router is wrapped into a function with NAV as
 
     return bookRouter; /* bookRouter has now to be returned from our router function */
 }
-module.exports = router;  /* We now have to export the router instead of bookRouter */
+module.exports = router;  /* We now have to export the router instead of bookRouter - the router function will be executed in app.js with the NAV element to create a router */
 ```
+
+
+### 13 Adding MongoDB
+___
+
+06_01
