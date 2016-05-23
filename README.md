@@ -1,5 +1,5 @@
 #A Node/Express Library App with MongoDB (Training)
-___
+
 
  This code is part of a training in web development with **Node.js**. **EJS** will be used as template engine for rendering HTML out of **Express**. The library application will use **MongoDB** to store information about books and authors - but will also employ the [GoodReads API](https://www.goodreads.com/api) to provide more details on each. **Passport.js** is used for local security.
 
@@ -19,7 +19,9 @@ This App was created in several steps:
 9. [Adding a Router for the Listview of our Book Page](#9-adding-a-router-for-the-listview-of-our-book-page)
   * [Adding a Route to Render](#adding-a-route-to-render)
   * [Adding some Books to the Book View](#adding-some-books-to-the-book-view)
-10. [Cleaning up app.js with Routers](10_cleaning_up_the_app_file_with_routers)
+10. [Cleaning up app.js with Routers](#10_cleaning_up_the_app_file_with_routers)
+11. [Creating a Single Book by ID Route & View](#11-creating-a-single-book-by-id-route-&-view)
+12. [Cleaning up our routes by creating a variable for the NAV element](#12-cleaning-up-our-routes-by-creating-a-variable-for-the-nav-element)
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -719,7 +721,7 @@ Now we can modify our bookListview to add those books via EJS:
                         </div>
                         <div class="col-xs-12 col-sm-8 col-lg-6">
                             <p><span class="label label-default"><strong><%= books[i].author %></strong></span></p>
-                            <p><span style="font-family:courier,'new courier';" class="text-muted"><a href="/Books/<% =books[i]._id %>" class="text-muted">Read More</a></span></p>
+                            <p><span style="font-family:courier,'new courier';" class="text-muted"><a href="/Books/<%= i %>" class="text-muted">Read More</a></span></p> <!-- The link to the detailed single book view will be /Books/[i] - we later change this to /Books/:id -->
                         </div>
                     </div>
                 </div>
@@ -736,3 +738,256 @@ When you access http://localhost:8080/Books you will see the nav bar from before
 
 ### 10 Cleaning up the App File with Routers
 ___
+
+Remove routes from the app.js file - We create a file bookRoutes.js under src/routes, cut bookRoutes from app.js and simply require bookRouter instead:
+
+**bookRoutes.js**
+
+```javascript
+var express = require('express');
+
+var bookRouter = express.Router();
+
+var router = function(nav){
+    var books = [
+    {
+        title: 'War and Peace',
+        genre: 'Historical Fiction',
+        author: 'Lev Nikolayevich Tolstoy',
+        read: false
+        },
+    {
+        title: 'Les Misérables',
+        genre: 'Historical Fiction',
+        author: 'Victor Hugo',
+        read: false
+        },
+    {
+        title: 'The Time Machine',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+        },
+    {
+        title: 'A Journey into the Center of the Earth',
+        genre: 'Science Fiction',
+        author: 'Jules Verne',
+        read: false
+        },
+    {
+        title: 'The Dark World',
+        genre: 'Fantasy',
+        author: 'Henry Kuttner',
+        read: false
+        },
+    {
+        title: 'The Wind in the Willows',
+        genre: 'Fantasy',
+        author: 'Kenneth Grahame',
+        read: false
+        },
+    {
+        title: 'Life On The Mississippi',
+        genre: 'History',
+        author: 'Mark Twain',
+        read: false
+        },
+    {
+        title: 'Childhood',
+        genre: 'Biography',
+        author: 'Lev Nikolayevich Tolstoy',
+        read: false
+        }
+    ];
+    bookRouter.route('/') /* route accessed via /Books - bookListView.ejs will be rendered and populated with title, nav and books */
+    .get(function (req, res) {
+        res.render('bookListView', {
+            title: 'Books',
+            nav: nav,
+            books: books
+        });
+    });
+
+    return bookRouter;
+}
+module.exports = router; /* the router has to be exported to be available for require in app.js */
+```
+
+**app.js**
+
+```javascript
+var express = require('express');
+
+var app = express();
+
+var port = process.env.PORT || 5000;
+var nav = [{
+    Link: '/Books',
+    Text: 'Book'
+    }, {
+    Link: '/Authors',
+    Text: 'Author'
+    }];
+var bookRouter = require('./src/routes/bookRoutes')(nav); /* We now require the book routes that we moved to bookRouter.js*/
+
+app.use(express.static('public'));
+app.set('views', './src/views');
+
+app.set('view engine', 'ejs');
+
+
+app.use('/Books', bookRouter); /* bookRouter is called here when you access /Books - routes are taken from bookRouter.js */
+
+app.get('/', function (req, res) {
+    res.render('index', {
+        title: 'Hello from render',
+        nav: [{
+            Link: '/Books',
+            Text: 'Books'
+        }, {
+            Link: '/Authors',
+            Text: 'Authors'
+        }]
+    });
+});
+
+app.get('/books', function (req, res) {
+    res.send('Hello Books');
+});
+
+app.listen(port, function (err) {
+    console.log('running server on port ' + port);
+});
+```
+
+
+### 11 Creating a Single Book by ID Route & View
+___
+
+Now we want to add another route to a detailed view of a single books. The Route should be accessible by /Books/:id (ID of the book inside the hardcoded books object - later we will pull an ID from MongoDB). The view rendered will be bookView.ejs.
+
+**bookRoutes.js**
+
+```javascript
+var express = require('express');
+
+var bookRouter = express.Router();
+
+var router = function(nav){
+    var books = [
+    {
+        title: 'War and Peace',
+        genre: 'Historical Fiction',
+        author: 'Lev Nikolayevich Tolstoy',
+        read: false
+        },
+    {
+        title: 'Les Misérables',
+        genre: 'Historical Fiction',
+        author: 'Victor Hugo',
+        read: false
+        },
+    {
+        title: 'The Time Machine',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+        },
+    {
+        title: 'A Journey into the Center of the Earth',
+        genre: 'Science Fiction',
+        author: 'Jules Verne',
+        read: false
+        },
+    {
+        title: 'The Dark World',
+        genre: 'Fantasy',
+        author: 'Henry Kuttner',
+        read: false
+        },
+    {
+        title: 'The Wind in the Willows',
+        genre: 'Fantasy',
+        author: 'Kenneth Grahame',
+        read: false
+        },
+    {
+        title: 'Life On The Mississippi',
+        genre: 'History',
+        author: 'Mark Twain',
+        read: false
+        },
+    {
+        title: 'Childhood',
+        genre: 'Biography',
+        author: 'Lev Nikolayevich Tolstoy',
+        read: false
+        }
+    ];
+    bookRouter.route('/')
+    .get(function (req, res) {
+        res.render('bookListView', {
+            title: 'Books',
+            nav: nav,
+            books: books
+        });
+    });
+
+    bookRouter.route('/:id')  /* We want to be able to access detailed info about a single book by adding the book ID - /Books/:id */
+    .get(function (req, res) {
+        var id = req.params.id; /* the id variable will be retrieved from books[id] */
+        res.render('bookView', {  /* We have to create another view for the single book - bookView.ejs */
+            title: 'Books',
+            nav: nav,
+            book: books[id]
+        });
+    });
+
+    return bookRouter;
+}
+module.exports = router;
+```
+
+Now we need to write the view to be rendered bookView.ejs (the code below only contains the body part - the header is identical to bookListView.ejs):
+
+**bookView.ejs**
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Library App</title>
+  </head>
+  <body>
+    <section class="container" style="margin-bottom: 300px;">
+        <div class="row">
+            <div class="col-xs-12 center-block">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><%= book.title %></h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-12 col-sm-2 col-lg-1">
+                            <a class="story-title"><img alt="Book Cover" src="<%=book.book.image_url%>" class="img-responsive"></a>
+                        </div>
+                        <div class="col-xs-12 col-sm-10 col-lg-11">
+                            <h4><span class="label label-default"><strong><%= book.author %></strong></span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  </body>
+</html>
+```
+
+
+### 12 Cleaning up our routes by creating a variable for the nav element
+___
+
+Now we want to add another route to a detailed view of a single books. The Route should be accessible by /Books/:id (ID of the book inside the hardcoded books object - later we will pull an ID from MongoDB). The view rendered will be bookView.ejs.
+
+**bookRoutes.js**
