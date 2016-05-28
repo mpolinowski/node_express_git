@@ -1137,7 +1137,7 @@ The installer can be downloaded from [MongoDB.org](https://www.mongodb.com/downl
 
 Install the database, navigate to the install directory (e.g. *C:\Program Files\MongoDB\Server\3.2\bin*) with your command line and start the application with the command ***mongod***. Make sure that you created a directory *C:\data\db* before running the mongod process!
 
-Commands for MongoDB:
+Useful Commands for MongoDB:
 
 Command | Function
 --- | ---
@@ -1147,3 +1147,164 @@ Command | Function
 ***show collections*** | Show all Collections of the opened Databases
 ***db.books.find();*** | Display all Objects inside the books Collection
 ***db.books.remove({})*** | Remove all Objects from the books Collection
+
+
+#### Create adminRoutes to populate the Database
+
+First install mongoDB into our project with *npm install --save mongodb*
+
+**adminRoutes.js**
+
+Now we create a new file adminRoutes.js in the *src/routes* directory.
+
+```javascript
+var express = require('express');
+var adminRouter = express.Router();
+var mongodb = require('mongodb').MongoClient; /* Pull in the mongoClient */
+
+var books = [{ /* Copy books from bookRoutes.js */
+    title: 'Cryptonomicon',
+    isbn10: '0060512806',
+    author: 'Neil Stephenson',
+    bookId: '816',
+    cover: 'http://ecx.images-amazon.com/images/I/414L%2BIbzcvL._SX317_BO1,204,203,200_.jpg',
+    read: true
+}, {
+    title: 'Leviathan Wakes',
+    isbn10: '0316129089',
+    author: 'James S.A. Corey',
+    bookId: '9533361',
+    cover: 'http://ecx.images-amazon.com/images/I/51QvTzb2vYL._SX322_BO1,204,203,200_.jpg',
+    read: false
+}, {
+    title: 'The Lord of the Rings',
+    isbn10: '0395193958',
+    author: 'J.R.R. Tolkien',
+    bookId: '569465',
+    cover: 'http://ecx.images-amazon.com/images/I/51eq24cRtRL._SX331_BO1,204,203,200_.jpg',
+    read: true
+}, {
+    title: 'Norwegian Wood',
+    isbn10: '0375704027',
+    author: 'Haruki Murakami',
+    bookId: '11297',
+    cover: 'http://ecx.images-amazon.com/images/I/512ZgaaHjIL._SX322_BO1,204,203,200_.jpg',
+    read: false
+}, {
+    title: 'Microserfs',
+    isbn10: '0006548598',
+    author: 'Douglas Coupland',
+    bookId: '2751',
+    cover: 'http://ecx.images-amazon.com/images/I/512ZD5DVC4L._SX345_BO1,204,203,200_.jpg',
+    read: true
+}, {
+    title: 'Up Country',
+    isbn10: '0446611913',
+    author: 'Nelson Demille',
+    bookId: '33820',
+    cover: 'http://ecx.images-amazon.com/images/I/512Jrk-RopL._SX290_BO1,204,203,200_.jpg',
+    read: true
+}, {
+    title: 'Night over Water',
+    isbn10: '0451173139',
+    author: 'Ken Follett',
+    bookId: '967690',
+    cover: 'http://ecx.images-amazon.com/images/I/51OON2-%2BI-L._SX297_BO1,204,203,200_.jpg',
+    read: true
+}, {
+    title: 'The Stand',
+    isbn10: '0307947300',
+    author: 'Stephen King',
+    bookId: '13155183',
+    cover: 'http://ecx.images-amazon.com/images/I/41IzCMjxPWL._SX320_BO1,204,203,200_.jpg',
+    read: true
+}];
+
+var router = function (nav) {
+
+    adminRouter.route('/addBooks') /* open http://localhost:8080/Admin/addBooks to add books to MongoDB */
+        .get(function (req, res) {
+            var url =
+                'mongodb://localhost:27017/libraryApp'; /* Connect to our local installation of MongoDB via the default port 27017 - create DB libraryApp on insert */
+
+            mongodb.connect(url, function (err, db) {
+                var collection = db.collection('books'); /* Connect to a Collection in libraryApp named books - is created on first insert */
+                collection.insertMany(books, /* insertMany inserts all Objects from the books variable from above (otherwise insertOne) */
+                    function (err, results) {
+                        res.send(results); /* Display the Collection after Insert - Object will be assigned ID by MongoDB*/
+                        db.close(); /* db.close has to be inside the callback (async !)*/
+                    }
+                );
+
+            });
+
+        });
+
+    return adminRouter;
+};
+
+module.exports = router;
+```
+
+
+**app.js**
+
+Add the /Admin route to App.js and use adminRouter for it
+
+```javascript
+var express = require('express');
+
+var app = express();
+
+var port = process.env.PORT || 5000;
+var nav = [{
+    Link: '/Books',
+    Text: 'Book'
+}, {
+    Link: '/Authors',
+    Text: 'Author'
+}];
+var bookRouter = require('./src/routes/bookRoutes')(nav);
+var adminRouter = require('./src/routes/adminRoutes')(nav); /* Add adminRoutes */
+
+app.use(express.static('public'));
+app.set('views', './src/views');
+
+app.set('view engine', 'ejs');
+
+app.use('/Books', bookRouter);
+app.use('/Admin', adminRouter); /* Use adminRoutes for /Admin */
+
+app.get('/', function (req, res) {
+    res.render('index', {
+        title: 'Hello from render',
+        nav: [{
+            Link: '/Books',
+            Text: 'Books'
+        }, {
+            Link: '/Authors',
+            Text: 'Authors'
+        }]
+    });
+});
+
+app.get('/books', function (req, res) {
+    res.send('Hello Books');
+});
+
+app.listen(port, function (err) {
+    console.log('running server on port ' + port);
+});
+```
+
+Now make sure mongod is running and access http://localhost:8080/Admin/addBooks - you will get a JSON Object as MongoDB Response. All books will have an ID assigned by the Database and the DB 'libraryApp' and Collection 'books' will be created. Use the mongo commands (List, above) to check.
+
+
+### 13 Use the MongoDB response for our bookView
+___
+
+#### Select Many
+
+
+
+#### Select One
