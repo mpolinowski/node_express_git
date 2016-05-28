@@ -1300,11 +1300,158 @@ app.listen(port, function (err) {
 Now make sure mongod is running and access http://localhost:8080/Admin/addBooks - you will get a JSON Object as MongoDB Response. All books will have an ID assigned by the Database and the DB 'libraryApp' and Collection 'books' will be created. Use the mongo commands (List, above) to check.
 
 
-### 13 Use the MongoDB response for our bookView
+### 14 Use the MongoDB Response
 ___
 
 #### Select Many
 
+**bookRoutes.js**
+
+Remove the hardcoded books variable and use the mongoDB response instead. Display all books from the books Collection. (bookListView.ejs)
+
+```javascript
+var express = require('express');
+var bookRouter = express.Router();
+var mongodb = require('mongodb').MongoClient;
+
+var router = function (nav) {
+
+ /* var books = [...]; has been deleted */
+
+    bookRouter.route('/')
+        .get(function (req, res) {
+            var url =
+                'mongodb://localhost:27017/libraryApp';
+
+            mongodb.connect(url, function (err, db) {
+                var collection = db.collection('books'); /* Connect to mongoDBs libraryApp books Collection */
+
+                collection.find({}).toArray( /* find all Objects in the books Collection and put it into an Array */
+                    function (err, results) {
+                        res.render('bookListView', { /* Copy the res.render from before into the function to render the result of our mongoDB query*/
+                            title: 'Books',
+                            nav: nav,
+                            books: results
+                        });
+                    }
+                );
+            });
+
+        });
+
+    return bookRouter;
+};
+module.exports = router;
+```
 
 
 #### Select One
+
+**bookRoutes.js**
+
+Now we want to have a books details page (bookView.ejs) that only displays one book from the books Collection
+
+```javascript
+var express = require('express');
+var bookRouter = express.Router();
+var mongodb = require('mongodb').MongoClient;
+var objectId = require('mongodb').ObjectID; /* Each book is assigned an ID by mongoDB - we make this ID available for our bookListView.ejs */
+
+var router = function (nav) {
+
+    bookRouter.route('/')
+        .get(function (req, res) {
+            var url =
+                'mongodb://localhost:27017/libraryApp';
+
+            mongodb.connect(url, function (err, db) {
+                var collection = db.collection('books');
+
+                collection.find({}).toArray(
+                    function (err, results) {
+                        res.render('bookListView', {
+                            title: 'Books',
+                            nav: nav,
+                            books: results
+                        });
+                    }
+                );
+            });
+
+        });
+
+    bookRouter.route('/:id')
+        .get(function (req, res) {
+            var id = new objectId(req.params.id); /* We use the mongoDB ID (_id) for id -> URL is now /Books/:_id instead of /Books/:id */
+            var url =
+                'mongodb://localhost:27017/libraryApp';
+
+            mongodb.connect(url, function (err, db) {
+                var collection = db.collection('books');
+
+                collection.findOne({_id: id}, /* findOne returns the first book from the books collection with the same _id */
+                    function (err, results) {
+                        res.render('bookView', { /* result will be rendered in bookView.ejs */
+                            title: 'Books',
+                            nav: nav,
+                            book: results
+                        });
+
+                    }
+                );
+
+            });
+
+        });
+
+    return bookRouter;
+};
+module.exports = router;
+```
+
+**bookListView.ejs**
+
+Now we want to have a books details page (bookView.ejs) that only displays one book from the books Collection
+
+```html
+...
+<!-- ################################################ Media ######################################################### -->
+
+<section class="container" style="margin-bottom: 400px;">
+    <div class="row">
+        <% for(var i=0; i<books.length;i++){%>
+            <div class="col-xs-6 col-md-4 col-lg-3 center-block" style="margin-bottom: 10px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><%=books[i].title%></h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-xs-12 col-sm-4 col-lg-6">
+                            <a class="story-title" href="/Books/<%=books[i]._id%>"><img alt="" src="<%=books[i].cover%>" style="height:100px" class="img-thumbnail"></a>
+                        </div>
+                        <div class="col-xs-12 col-sm-8 col-lg-6">
+                            <p><span class="label label-default"><strong><%=books[i].author%></strong></span></p>
+                            <p><span style="font-family:courier,'new courier';" class="text-muted"><a href="/Books/<%=books[i]._id%>" class="text-muted">Read More</a></span></p> <!-- Change URL from /Books/:i (<%= i %> with i = 0,1,2,3....8) to /Books/:_id -> _id will be used to findOne -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%}%>
+    </div>
+    <hr>
+
+</section>
+...
+```
+
+
+### 15 Authentication with Passport.js
+___
+
+**authRoutes.js**
+
+IpsumLorem
+
+```javascript
+
+```
