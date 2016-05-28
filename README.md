@@ -23,7 +23,7 @@ This App was created in several steps:
 11. [Creating a Single Book by ID Route & View](#11-creating-a-single-book-by-id-route--view)
 12. [Cleaning up our routes by creating a variable for the NAV element](#12-cleaning-up-our-routes-by-creating-a-variable-for-the-nav-element)
 13. [Adding MongoDB](#13-adding-mongodb)
-14. 
+14.
 
 
 ### 1 Install Node.js and Express.js to serve our Web Application
@@ -1131,4 +1131,19 @@ module.exports = router;  /* We now have to export the router instead of bookRou
 ### 13 Adding MongoDB
 ___
 
-06_01
+#### Download and Install MongoDB
+
+The installer can be downloaded from [MongoDB.org](https://www.mongodb.com/download-center?jmp=nav#community)
+
+Install the database, navigate to the install directory (e.g. *C:\Program Files\MongoDB\Server\3.2\bin*) with your command line and start the application with the command ***mongod***. Make sure that you created a directory *C:\data\db* before running the mongod process!
+
+Commands for MongoDB:
+
+Command | Function
+--- | ---
+***mongo*** | Start
+***show dbs*** | Display all Databases
+***mongo libraryApp*** | Open libraryApp Database
+***show collections*** | Show all Collections of the opened Databases
+***db.books.find();*** | Display all Objects inside the books Collection
+***db.books.remove({})*** | Remove all Objects from the books Collection
