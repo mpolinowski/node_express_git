@@ -1445,13 +1445,275 @@ Now we want to have a books details page (bookView.ejs) that only displays one b
 ```
 
 
-### 15 Authentication with Passport.js
+### 15 Creating a SignIn Form on Index.ejs
 ___
 
-**authRoutes.js**
+**index.ejs**
 
-IpsumLorem
+Just a simple Input Form
+
+```html
+...
+<!-- ################################################ Login ######################################################### -->
+
+<div class="col-xs-4 col-xs-offset-1" style="margin-top: 30px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-2 col-xs-12 text-center">
+                <form name="signUpForm" action="/auth/signUp" method="post"> <!-- Creating a form to post SignUp to /auth/signUp -->
+                    User Name:
+                    <input name="userName" id="userName"> <!-- Input userName for post -->
+                    <br/>
+                    <br/>
+                    Password:
+                    <input name="password" id="password"> <!-- Input password for post -->
+                    <br/>
+                    <br/>
+                    <input type="submit" value="Sign Up"> <!-- Submit post -->
+                </form>
+            </div>
+        </div> <!-- /row -->
+    </div> <!-- /container -->
+</div> <!-- /v-center -->
+
+<!-- ################################################ /Login ######################################################### -->
+...
+```
+
+
+### 16 Creating the Authentication Route
+___
+
+**authRoute.js**
+
+We need to add *var bodyParser = require('body-parser');* to **app.js**. The body-parser middleware will be used in *app.use(bodyParser.json());* and
+*app.use(bodyParser.urlencoded());* to create a req.body object from JSON elements or URL parameter. Body-parser is install with *npm install --save body-parser*.
 
 ```javascript
+var express = require('express');
+var authRouter = express.Router(); /* Creating the Authentication Router */
+var mongodb = require('mongodb').MongoClient;
+var passport = require('passport');
+
+var router = function () {
+    authRouter.route('/signUp') /* Creating the SingUp route */
+        .post(function (req, res) {
+            console.log(req.body); /* We log the req.body Object created by bodyParser from the signUp post to /auth/signup */
+                });
+
+            };
+
+    return authRouter; /* return authRouter to be available for app.js */
+};
+
+module.exports = router;
 
 ```
+
+**app.js**
+
+We now add the authRoute to app.js
+
+```javascript
+var express = require('express');
+var bodyParser = require('body-parser');  /* Install bodyParser see above */
+
+var app = express();
+
+var port = process.env.PORT || 5000;
+var nav = [{
+    Link: '/Books',
+    Text: 'Book'
+}, {
+    Link: '/Authors',
+    Text: 'Author'
+}];
+var bookRouter = require('./src/routes/bookRoutes')(nav);
+var adminRouter = require('./src/routes/adminRoutes')(nav);
+var authRouter = require('./src/routes/authRoutes')(nav); /* Use the created authRouter for the Authentication routes */
+
+app.use(express.static('public'));
+app.use(bodyParser.json()); /* Use bodyParser to create req.body Object from JSON elements*/
+app.use(bodyParser.urlencoded()); /* Use bodyParser to create req.body Object from URL encoded JSON elements*/
+
+require('./src/config/passport')(app);
+
+app.set('views', './src/views');
+
+app.set('view engine', 'ejs');
+
+app.use('/Books', bookRouter);
+app.use('/Admin', adminRouter);
+app.use('/Auth', authRouter); /* Use the created authRouter for the Authentication routes */
+
+app.get('/', function (req, res) {
+    res.render('index', {
+        title: 'Hello from render',
+        nav: [{
+            Link: '/Books',
+            Text: 'Books'
+        }, {
+            Link: '/Authors',
+            Text: 'Authors'
+        }]
+    });
+});
+
+app.get('/books', function (req, res) {
+    res.send('Hello Books');
+});
+
+app.listen(port, function (err) {
+    console.log('running server on port ' + port);
+});
+```
+
+
+### 17 Adding Passport.js Middleware
+___
+
+**authRoute.js**
+
+First we need to *npm install --save cookie-parser passport express-session*.
+
+```javascript
+var express = require('express');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser'); /* To parse the session cookie used by passport */
+var passport = require('passport'); /* user authentication */
+var session = require('express-session'); /* for passport-session: creates a session for the logged in user. Session stores the user information inside a cookie for the active session */
+
+var app = express();
+
+var port = process.env.PORT || 5000;
+var nav = [{
+    Link: '/Books',
+    Text: 'Book'
+}, {
+    Link: '/Authors',
+    Text: 'Author'
+}];
+var bookRouter = require('./src/routes/bookRoutes')(nav);
+var adminRouter = require('./src/routes/adminRoutes')(nav);
+var authRouter = require('./src/routes/authRoutes')(nav);
+
+app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser()); /* use cookieParser to parse the session cookie */
+app.use(session({secret: 'library'})); /* The session needs a secret - can be chosen freely */
+
+require('./src/config/passport')(app); /* We separate the passport stuff src/config/passport.js - we pull in (app) to be able to app.use inside passport.js */
+
+app.set('views', './src/views');
+
+app.set('view engine', 'ejs');
+
+app.use('/Books', bookRouter);
+app.use('/Admin', adminRouter);
+app.use('/Auth', authRouter);
+
+app.get('/', function (req, res) {
+    res.render('index', {
+        title: 'Hello from render',
+        nav: [{
+            Link: '/Books',
+            Text: 'Books'
+        }, {
+            Link: '/Authors',
+            Text: 'Authors'
+        }]
+    });
+});
+
+app.get('/books', function (req, res) {
+    res.send('Hello Books');
+});
+
+app.listen(port, function (err) {
+    console.log('running server on port ' + port);
+});
+```
+
+**passport.js**
+
+Separate the passport component to src/config/passport.js. We need to *npm install --save passport-local* to use the local strategy of authentication (not OAuth).
+
+```javascript
+var passport = require('passport'); /* pull in passport */
+
+module.exports = function (app) {
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    passport.serializeUser(function (user, done) { /* Add User to Session */
+        done(null, user); /* Callback User from Database */
+    });
+
+    passport.deserializeUser(function (user, done) { /* Remove User from Session */
+        done(null, user);
+    });
+
+    require('./strategies/local.strategy')(); /* We only use a local.strategy for authentication - not passport.google, passport.facebook, etc. - Third-party OAuth. We save the file in src/config/strategies/local.strategy.js */
+
+};
+```
+
+
+### 18 Authentication with Local Strategy
+___
+
+**local.strategy.js**
+
+Now we create the local.strategy.js as required in passport.js
+
+```javascript
+var passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy,
+    mongodb = require('mongodb').MongoClient;
+
+module.exports = function () {
+    passport.use(new LocalStrategy({
+          usernameField: 'userName', /* take userName from input form in index.ejs when posted to /auth/signUp (bodyParser) */
+          passwordField: 'password' /* take password from input form in index.ejs when posted to /auth/signUp (bodyParser) */
+      },
+      function (username, password, done) { /* Pass username/password - then callBack done */
+          var user = {username: username,
+                      password: password
+                    };
+                    done(null, user); /* Take user and return user - authentication with mongoDB comes next */
+                  }));
+};
+```
+
+**authRoute.js**
+
+req.login and redirect to Profile
+
+```javascript
+var express = require('express');
+var authRouter = express.Router();
+var mongodb = require('mongodb').MongoClient;
+var passport = require('passport');
+
+var router = function () {
+    authRouter.route('/signUp')
+        .post(function (req, res) {
+            console.log(req.body);
+            req.login(req.body, function(){ /* We do not yet save the user to mongoDB - just redirect him to /auth/profile */
+              res.redirect('/auth/profile');
+            });
+        });
+    authRouter.route('/profile') /* we have to create the profile route */
+      .get(function(req, res) { /* When GET /profile... */
+        res.json(req.user); /* ... respond with the JSON Object user */
+      });
+    return authRouter;
+};
+
+module.exports = router;
+```
+
+
+### 19 Saving the user to MongoDB
+___
