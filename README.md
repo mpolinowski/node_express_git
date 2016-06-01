@@ -1694,7 +1694,6 @@ req.login and redirect to Profile
 var express = require('express');
 var authRouter = express.Router();
 var mongodb = require('mongodb').MongoClient;
-var passport = require('passport');
 
 var router = function () {
     authRouter.route('/signUp')
@@ -1717,3 +1716,160 @@ module.exports = router;
 
 ### 19 Saving the User to MongoDB
 ___
+
+**authRoute.js**
+
+SignUp save User to MongoDB
+
+```javascript
+var express = require('express');
+var authRouter = express.Router();
+var mongodb = require('mongodb').MongoClient;
+
+var router = function () {
+    authRouter.route('/signUp')
+        .post(function (req, res) {
+            console.log(req.body);
+            var url =
+                'mongodb://localhost:27017/libraryApp';
+            mongodb.connect(url, function (err, db) { /* connect to local install of mongoDB */
+                var collection = db.collection('users'); /* open users collection that is created on first signUp */
+                var user = { /* Creation of a user object from req.body */
+                    username: req.body.userName,
+                    password: req.body.password
+                };
+
+                collection.insert(user, /* the user is automatically inserted into the users collection (collection is automatically created) */
+                    function (err, results) {
+                        req.login(results.ops[0], function () { /* user is no longer taken from req.body but from the results ops[0] limits the result to the {username, password, _id} JSON object */
+                            res.redirect('/auth/profile');
+                        });
+                    });
+            });
+
+        });
+    authRouter.route('/profile')
+      .get(function(req, res) {
+        res.json(req.user);
+      });
+    return authRouter;
+};
+
+module.exports = router;
+```
+
+
+### 20 User SignIn from mongoDB
+___
+
+**index.ejs**
+
+Creating the SignIn Form
+
+```html
+<!-- ################################################ Login ######################################################### -->
+
+<div class="col-xs-4 col-xs-offset-1" style="margin-top: 30px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-2 col-xs-12 text-center">
+                <form name="signInForm" action="/auth/signIn" method="post"> <!-- SignIN -->
+                    User Name:
+                    <input name="userName" id="userName">
+                    <br/>
+                    <br/>
+                    Password:
+                    <input name="password" id="password">
+                    <br/>
+                    <br/>
+                    <input type="submit" value="Sign In">
+                </form>
+            </div>
+
+            <div class="clearfix visible-xs" style="margin-bottom: 20px;"></div>
+
+            <div class="col-sm-offset-1 col-sm-2 col-xs-12 text-center">
+                <form name="signUpForm" action="/auth/signUp" method="post"> <!-- SignUp -->
+                    User Name:
+                    <input name="userName" id="userName">
+                    <br/>
+                    <br/>
+                    Password:
+                    <input name="password" id="password">
+                    <br/>
+                    <br/>
+                    <input type="submit" value="Sign Up">
+                </form>
+            </div>
+        </div> <!-- /row -->
+    </div> <!-- /container -->
+</div> <!-- /v-center -->
+<!-- ################################################ /Login ######################################################### -->
+
+```
+
+**authRoute.js**
+
+SignIn save User to MongoDB
+
+```javascript
+var express = require('express');
+var authRouter = express.Router();
+var mongodb = require('mongodb').MongoClient;
+var passport = require('passport'); /* Pull in passport for signIn */
+
+var router = function () {
+    authRouter.route('/signUp')
+        .post(function (req, res) {
+            console.log(req.body);
+            var url =
+                'mongodb://localhost:27017/libraryApp';
+            mongodb.connect(url, function (err, db) {
+                var collection = db.collection('users');
+                var user = {
+                    username: req.body.userName,
+                    password: req.body.password
+                };
+
+                collection.insert(user,
+                    function (err, results) {
+                        req.login(results.ops[0], function () {
+                            res.redirect('/auth/profile');
+                        });
+                    });
+            });
+
+        });
+    authRouter.route('/signIn')
+        .post(passport.authenticate('local', { /* user post is authenticated with passport local strategy */
+            failureRedirect: '/' /* If user did not sign up first - redirect back to home */
+        }), function (req, res) {
+            res.redirect('/auth/profile'); /* If successfully authenticated go to profile page */
+        });
+    authRouter.route('/profile')
+        .all(function (req, res, next) {
+            if (!req.user) {
+                res.redirect('/');
+            }
+            next();
+        })
+        .get(function (req, res) {
+            res.json(req.user);
+        });
+    return authRouter;
+};
+
+module.exports = router;
+```
+
+
+### 21 Verifying User in DB
+___
+
+**authRoute.js**
+
+Verification
+
+```javascript
+
+´´´

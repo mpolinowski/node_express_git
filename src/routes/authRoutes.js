@@ -17,8 +17,8 @@ var router = function () {
 
                 collection.insert(user, function (err, results) {
                     req.login(results.ops[0], function() {
-                        //res.redirect('/auth/profile');
-                        res.redirect('/');
+                        //res.redirect('/auth/profile');  /* Use this for debugging or create a profile page */
+                        res.redirect('/'); /* After user insertion return home instead of going to profile */
                     });
                 });
 
@@ -28,13 +28,13 @@ var router = function () {
         .post(passport.authenticate('local', {
         failureRedirect: '/'
     }), function(req, res) {
-        //res.redirect('/auth/profile');
-        res.redirect('/Books');
+        res.redirect('/auth/profile');
+        //res.redirect('/Books');
     });
     authRouter.route('/profile')
         .all(function (req, res, next) {
-            if (!req.user) {
-                res.redirect('/');
+            if (req.user) {
+                res.redirect('/Books'); /* After successful signIn go to /Books */
             }
             next();
         })
